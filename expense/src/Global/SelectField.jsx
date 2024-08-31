@@ -9,7 +9,7 @@ const list = ['Grocery', 'Transport', 'Rent', 'Gas', 'Electricity', 'Water', 'Mi
 const ValueContext = createContext()
 
 export default function SelectField({label, placeholder, type}){
-
+    const {fields, setFields} = useContext(FormContext)
     const [listToggle, setListToggle] = useState(false)
     const [value, setValue] = useState()
     const [fieldValue, setFieldValue] = useState()
@@ -60,10 +60,13 @@ export default function SelectField({label, placeholder, type}){
         setTimeout(() => {
             if(!parentRef.current.contains(document.activeElement)){
                 setValue(prev => {
+                    let fieldValue = fields.current[label].value
                     if(fieldValue){
                         console.log(fieldValue)
+                        console.log(fields)
                         return fieldValue
                     } else {
+                        console.log(fields)
                         return ''
                     }
                 })
@@ -80,11 +83,12 @@ export default function SelectField({label, placeholder, type}){
         hideResults()
     }
     return(
-        <ValueContext.Provider value = {[setResults, setValue, setFieldValue]}>    
+        <ValueContext.Provider value = {[setResults, setValue, setFieldValue, setFields, fields]}>    
         <div className='searchFieldWrapper' ref={parentRef} >
             {/* <label className='fieldLabel'>{label}</label><br /> */}
             <input className='inputField' placeholder={placeholder} style={{cursor: 'pointer'}} onClick={(e) => clickFunction(e)} onFocus={null}  onBlur={onBlur} 
-            value={value} 
+            value={value}
+            ref={fields.current[label].ref}
             readOnly/>
             <SearchResults results={results} label={label}/>
             {/* <div onClick={() => console.log(results)}>Test</div> */}
@@ -96,7 +100,7 @@ export default function SelectField({label, placeholder, type}){
 
 function SearchResults({results, label}){
 
-    let [setResults, setValue, setFieldValue] = useContext(ValueContext)
+    let [setResults, setValue, setFieldValue, setFields, fields] = useContext(ValueContext)
     let fieldValues = useContext(FieldsContext)
 
     function selectItem(e, item){
@@ -105,11 +109,17 @@ function SearchResults({results, label}){
         // console.log(item)
         e.target.focus()
         setValue(prev => {
-           setFieldValue(prev => {
-            return item.Name || item
-         }) 
+        //    setFieldValue(prev => {
+        //     return item.Name || item
+        //  })
+        //    setFields(prev => {
+        //     //    let field = prev[label] 
+        //        return {...prev, [label]: {...prev[label], value: item.Name || item}}
+        //    }) 
+           fields.current[label].value = item.Name || item
            return item.Name || item
         })
+        console.log(fields)
         setResults()
         // setResults()
     }
