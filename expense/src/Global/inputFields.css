@@ -1,0 +1,138 @@
+
+  
+  .inputField{
+    width: 180px;
+    height: 25px;
+    margin: 5px;
+    border-radius: 50px;
+    border: 1px solid black;
+    padding: 5px;
+    padding-left: 10px;
+    font-family: 'Manrope';
+  }
+
+  .invalidField{
+    border: 2px solid red;
+    border-color: red;
+  }
+  
+  .selectInputField{
+      all: unset;
+      width: 180px;
+      height: 25px;
+      margin: 5px;
+      border-radius: 50px;
+      border: 1px solid black;
+      padding: 5px;
+      padding-left: 10px;
+      color: grey;
+      /* background-image: url(../../../imgs/chevron-down.svg); */
+      background-repeat: no-repeat;
+      background-origin: border-box;
+      background-position: center;
+      background-position-x: 95%;
+      cursor: pointer;
+      width: 150px;
+  }
+  
+  .btn{
+      all: unset;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgb(54, 178, 255);
+      /* height: 100%; */
+      width: 25%;
+      cursor: pointer;
+      user-select: none;
+      padding: 10px;
+      border-radius: 50px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+    }
+  
+    .btn:hover{
+      background-color: rgb(48, 163, 234)
+    }
+  
+    .btn:active{
+      background-color: rgb(44, 145, 207)
+    }
+
+    #searchBtn{
+        width: 10%;
+    }
+    #resetBtn{
+      width: 10%;
+  }
+
+  .popupErrorDiv{
+    color: red;
+    /* align-self: flex-start; */
+    /* margin-left: 5%; */
+    /* padding-bottom: 15px; */
+    display: flex;
+    /* margin-top: -13px; */
+  }
+
+  .searchFieldWrapper{
+    position: relative;
+    display: block;
+    /* display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; */
+    width: fit-content;
+    /* border: 1px solid black; */
+  }
+
+  .searchResultDiv{
+    position: absolute;
+    display: block;  
+    border: 1px solid black;
+    border-radius: 10px;
+    width: 90%;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%);
+    background-color: white;
+    user-select: none;
+    z-index: 1;
+  }
+
+  .searchItem{
+    padding: 2%;
+    cursor: pointer;
+    height: 20px;
+    font-size: larger;
+    color: black;
+    padding-bottom: 10px;
+    border-bottom: 1px solid;
+
+  }
+
+  .searchItem:hover{
+    background-color: rgb(89, 89, 89, 0.2);
+  }
+
+  .searchItem:active{
+    background-color: rgb(89, 89, 89, 0.4);
+  }
+  
+  .divider{
+    border: 1px solid black;
+    width: 90%;
+    align-self: center;
+  }
+
+.fieldLabel{
+  margin: 8px;
+}
+
+.noResult{
+  font-size: small;
+  padding: 2%;
+  text-align: middle;
+}
+  

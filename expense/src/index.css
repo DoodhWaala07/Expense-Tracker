@@ -1,0 +1,25 @@
+body {
+  margin: 0;
+  font-family: 'Manrope';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  position: absolute;
+  top: 50%; right: 50%;
+  transform: translate(50%,-50%);
+  background: black;
+  color: white;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.flex-column{
+  display:flex;
+  flex-direction: column;
+}
+
+.flex{
+  display: flex;
+}
