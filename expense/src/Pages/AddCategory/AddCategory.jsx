@@ -29,18 +29,11 @@ export default function AddCategory() {
     })
 
     return (
-        <div classname = 'addCat-main' style={{backgroundColor: getRandomColor()}}>
-            <MyForm fields={categoryFields}>
-                {/* <InputField label='Category' placeholder='Category'/> */}
-                {Object.entries(categoryFields.current).map(([key, value], i) => {
-                    console.log('Render')
-                    return (
-                    <>
-                    <SelectField key={i} label={value.label || key} placeholder={value.placeholder || key} type={value.type}/>
-                    </>
-                    )
-                }
-                )}
+        <div className = 'addCatMain'>
+            <MyForm fields = {categoryFields}>
+               {Object.entries(categoryFields.current).map(([label, field], i) => (
+                   <SelectField key = {i} label = {label || field.label} placeholder = {label || field.placeholder} type = {field.type} ref = {field.ref} />
+               ))}
             </MyForm>
             <button className='btn'>Add Category</button>
         </div>
