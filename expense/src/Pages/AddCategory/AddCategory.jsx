@@ -5,6 +5,8 @@ import MyForm from '../../Global/Form/MyForm'
 import { useEffect, useState, createContext, useRef } from 'react'
 import SelectField from '../../Global/SelectField'
 import InputField from '../../Global/InputField'
+import axios from 'axios'
+import formatData from '../../Global/Functions/formatData'
 
 
 const FormContext = createContext()
@@ -21,8 +23,8 @@ function getRandomColor() {
 
 export default function AddCategory() {
     const [categoryFields, setCategoryFields] = useState({
-        'Search_Category': {value: '', placeholder: '', type: 'search', ref: {}},
-        'Sub-Category': {value: '', placeholder: '', type: 'select', ref: {}},
+        'Category': {value: '', placeholder: '', type: 'text', ref: {}},
+        'Sub-Category': {value: '', placeholder: '', type: 'text', ref: {}},
     })
     const count = useRef(0)
 
@@ -52,6 +54,12 @@ export default function AddCategory() {
         })
     }
 
+    function submitCategory(e){
+        axios.post('/category', {category: categoryFields['Category'], subCategories: [categoryFields['Sub-Category'].value, ...Object.values(subCategories).map(sub => sub.value)]})
+        .then(res => console.log(res))
+        .catch(err => console.log(err))
+    }
+
     useEffect(() => {
         console.log(categoryFields)
         console.log(subCategories)
@@ -75,7 +83,7 @@ export default function AddCategory() {
                ))}
             </MyForm>
             <p className='addCat-new-p' onClick={(e) => addSubCategory(e)}>Add new</p>
-            <button className='btn'>Add Category</button>
+            <button className='btn' onClick={(e) => submitCategory(e)}>Add Category</button>
         </div>
     )
 }

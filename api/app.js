@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser')
 // const { error } = require('console');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const verifyTokens = require('./authorization')
+// const verifyTokens = require('./authorization')
 const dotenv = require('dotenv');
 const { connect } = require('http2');
 const e = require('express');
@@ -77,11 +77,11 @@ dotenv.config()
 
 var jsonParser = bodyParser.json()
 
-const verifyToken = verifyTokens.verifyToken
+// const verifyToken = verifyTokens.verifyToken
 
-const verifyToken2 = verifyTokens.verifyToken2
+// const verifyToken2 = verifyTokens.verifyToken2
 
-const decodedToken = verifyTokens.decodedToken
+// const decodedToken = verifyTokens.decodedToken
 
 const app = express();
 
@@ -112,4 +112,8 @@ io.of('/orders').on('connection', (socket)=>{
 
 io.on('disconnect', (socket) => {
   console.log('User Disconnected.')
+})
+
+app.post('/category', jsonParser, (req, res) => {
+  console.log(req.body)
 })

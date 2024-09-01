@@ -10,8 +10,8 @@ export default function TextField({label, placeholder, id}){
     }
     return(
         <div className='searchFieldWrapper'>
-            {/* <label className='fieldLabel'>{label}</label><br/> */}
-            <input type="text" className="inputField" value={fields[id].value} onChange={onChange} placeholder={placeholder}/>
+            {/* <label className='fieldLabel'>{label.replaceAll('_', ' ')}</label><br/> */}
+            <input type="text" className="inputField" value={fields[id].value} onChange={onChange} placeholder={placeholder.replaceAll('_', ' ')}/>
         </div>
     )
 }
