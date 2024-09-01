@@ -11,7 +11,7 @@ const ValueContext = createContext()
 export default function SelectField({label, placeholder, type, id}){
     const {fields, setFields} = useContext(FormContext)
     const [listToggle, setListToggle] = useState(false)
-    const [value, setValue] = useState()
+    const [value, setValue] = useState(fields[id].value)
     const [fieldValue, setFieldValue] = useState()
     const parentRef = useRef()
 
@@ -36,6 +36,10 @@ export default function SelectField({label, placeholder, type, id}){
             document.removeEventListener('touchstart', handleTouchStart);
         };
     }, []);
+
+    useEffect(() => {
+        setValue(fields[id].value)
+    }, [fields])
 
     function clickFunction(e){
         // e.preventDefault()

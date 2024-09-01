@@ -25,6 +25,7 @@ export default function AddCategory() {
     const defaultCategoryFields = {
         'Category': {value: '', placeholder: '', type: 'text', ref: {}},
         'Sub-Category': {value: '', placeholder: '', type: 'text', ref: {}},
+        'Select': {value: '', placeholder: '', type: 'select', ref: {}},
     }
     const [categoryFields, setCategoryFields] = useState(defaultCategoryFields)
     const count = useRef(0)
