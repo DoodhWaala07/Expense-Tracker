@@ -17,3 +17,40 @@
 .addCatMain .btn{
     width: 70%;
 }
+
+.addCat-new-p{
+    color: rgb(0, 123, 255);
+    cursor: pointer;
+    align-self: flex-start;
+    margin-top: 0px;
+    margin-left: 10px;
+}
+
+.addCat-new-p:hover{
+    color: rgba(0, 123, 255, 0.726);
+    cursor: pointer;
+}
+
+.addCat-new-p:active{
+    color: rgb(0, 123, 255);
+    cursor: pointer;
+}
+
+.subCatWrapper{
+    position: relative;
+    width: 100%;
+}
+
+.subCatWrapper .btn{
+    position: absolute;
+    top: 50%;
+    left: -15px;
+    transform: translate(-50%,-50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 500px;
+    margin: 0px;
+}
+
+
+

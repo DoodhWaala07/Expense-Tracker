@@ -8,7 +8,7 @@ const list = ['Grocery', 'Transport', 'Rent', 'Gas', 'Electricity', 'Water', 'Mi
 
 const ValueContext = createContext()
 
-export default function SelectField({label, placeholder, type, id}){
+export default function SearchField({label, placeholder, type, id}){
     const {fields, setFields} = useContext(FormContext)
     const [listToggle, setListToggle] = useState(false)
     const [value, setValue] = useState()
@@ -42,13 +42,13 @@ export default function SelectField({label, placeholder, type, id}){
         // console.log(results)
         
         setValue()
-        if(results === undefined){
-            // console.log('test')
-            showResults()
-            // e.target.removeAttribute('readonly')
-        } else if (results !== undefined){
-            e.target.removeAttribute('readonly')
-        }
+        // if(results === undefined){
+        //     // console.log('test')
+        //     showResults()
+        //     // e.target.removeAttribute('readonly')
+        // } else if (results !== undefined){
+        //     e.target.removeAttribute('readonly')
+        // }
     }
 
     function showResults(){
@@ -83,7 +83,7 @@ export default function SelectField({label, placeholder, type, id}){
     }
 
     function onBlur(e){
-        e.target.setAttribute('readonly', true)
+        // e.target.setAttribute('readonly', true)
         hideResults()
     }
     return(
@@ -93,7 +93,7 @@ export default function SelectField({label, placeholder, type, id}){
             <input className='inputField' placeholder={placeholder.replaceAll('_', ' ')} style={{cursor: 'pointer'}} onClick={(e) => clickFunction(e)} onFocus={null}  onBlur={onBlur} 
             value={value}
             ref={fields[id].ref}
-            readOnly/>
+            />
             <SearchResults results={results} label={label} id={id}/>
             {/* <div onClick={() => console.log(results)}>Test</div> */}
         </div>
