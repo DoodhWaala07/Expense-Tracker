@@ -22,10 +22,11 @@ function getRandomColor() {
   }
 
 export default function AddCategory() {
-    const [categoryFields, setCategoryFields] = useState({
+    const defaultCategoryFields = {
         'Category': {value: '', placeholder: '', type: 'text', ref: {}},
         'Sub-Category': {value: '', placeholder: '', type: 'text', ref: {}},
-    })
+    }
+    const [categoryFields, setCategoryFields] = useState(defaultCategoryFields)
     const count = useRef(0)
 
     const [subCategories, setSubCategories] = useState({})
@@ -56,11 +57,18 @@ export default function AddCategory() {
         })
     }
 
+    function confirmAddCategory(){
+        setCategoryFields(prev => {
+            return {...defaultCategoryFields}
+        })
+        resetDialogBox()
+    }
+
     function submitCategory(e){
         axios.post('/category', {category: categoryFields['Category'].value.trim(), subCategories: [categoryFields['Sub-Category'].value.trim(), ...Object.values(subCategories).map(sub => sub.value.trim())]})
         .then(res => {
             let msg = res.data
-            setDialogBox(prev => ({msg, confirm: resetDialogBox, close: null, show: true}))
+            setDialogBox(prev => ({msg, confirm: confirmAddCategory, close: null, show: true}))
         })
         .catch(error => {
             let msg
@@ -78,7 +86,6 @@ export default function AddCategory() {
                 console.error('Error in request setup:', error.message);
                 msg = error.message
             }
-
             setDialogBox(prev => ({msg, confirm: resetDialogBox, close: null, show: true}))
         })
     }
@@ -87,6 +94,11 @@ export default function AddCategory() {
         console.log(categoryFields)
         console.log(subCategories)
     }, [subCategories])
+
+    useEffect(() => {
+        console.log(categoryFields)
+        // console.log(subCategories)
+    }, [categoryFields])
 
     return (
         <div className = 'addCatMain'>
