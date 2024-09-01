@@ -6,8 +6,7 @@ import { useEffect, useState, createContext, useRef } from 'react'
 import SelectField from '../../Global/SelectField'
 import InputField from '../../Global/InputField'
 import axios from 'axios'
-import formatData from '../../Global/Functions/formatData'
-
+import formatData, { removeSpaces } from '../../Global/Functions/formatData'
 
 const FormContext = createContext()
 
@@ -55,9 +54,21 @@ export default function AddCategory() {
     }
 
     function submitCategory(e){
-        axios.post('/category', {category: categoryFields['Category'], subCategories: [categoryFields['Sub-Category'].value, ...Object.values(subCategories).map(sub => sub.value)]})
+        axios.post('/category', {category: categoryFields['Category'].value.trim(), subCategories: [categoryFields['Sub-Category'].value.trim(), ...Object.values(subCategories).map(sub => sub.value.trim())]})
         .then(res => console.log(res))
-        .catch(err => console.log(err))
+        .catch(error => {
+            if (error.response) {
+                // The server responded with a status other than 200 range
+                console.error('Error Status:', error.response.status);  // 409
+                console.error('Error Message:', error.response.data);  // 'Error Handled'
+            } else if (error.request) {
+                // The request was made but no response was received
+                console.error('No response received:', error.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.error('Error in request setup:', error.message);
+            }
+        })
     }
 
     useEffect(() => {

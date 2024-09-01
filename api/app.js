@@ -22,14 +22,14 @@ const db = mysql1.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'Maheen123',
-  database: 'shipping'
+  database: 'expenses'
 });
 
 const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: 'Maheen123',
-  database: 'shipping',
+  database: 'expenses',
   connectionLimit: 10,
   connectTimeout: 10000,
 });
@@ -114,6 +114,51 @@ io.on('disconnect', (socket) => {
   console.log('User Disconnected.')
 })
 
-app.post('/category', jsonParser, (req, res) => {
-  console.log(req.body)
+app.post('/category', jsonParser, async (req, res) => {
+  let con
+  let {category, subCategories} = req.body
+  console.log(category, subCategories)
+  let sql = 'INSERT INTO category (Name) VALUES (?)'
+  let catId
+
+  try{
+    con = await pool.getConnection()
+    con.beginTransaction()
+
+    try{
+      result = await con.query(sql, category)
+      catId = result[0].insertId
+    } catch(err){
+      if(err.code === 'ER_DUP_ENTRY'){
+        res.status(409).send('Category already exists.')
+      }
+      throw new Error('Failed to create category.')
+    }
+
+      for (const subCat of subCategories) {
+        console.log(subCat)
+        sql = 'INSERT INTO sub_category (Name, Category) VALUES (?, ?)';
+        try {
+          await con.query(sql, [subCat, catId]);
+        } catch (err) {
+          if (err.code === 'ER_DUP_ENTRY') {
+            res.status(409).send('Sub-Category ' + subCat + ' already exists.');
+          }
+          throw new Error('Failed to create sub-categories.');
+        }
+      }
+    await con.commit()
+  }
+  catch(err){
+    console.log(err)
+    if(con){
+      con.rollback()
+    }
+  }
+  finally{
+    con.release()
+  }
+  console.log('Helloooo')
+
+  // console.log(req.body)
 })

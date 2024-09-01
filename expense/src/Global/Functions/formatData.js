@@ -5,3 +5,7 @@ export default function formatData(fields){
     })
     return data
 }
+
+export function removeSpaces(string){
+    return string.replace(/\s/g, '')
+}
