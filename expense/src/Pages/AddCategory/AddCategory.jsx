@@ -2,11 +2,12 @@ import './addCategory.css'
 import '../../Global/inputFields.css'
 // import InputField from '../../Global/SelectField'
 import MyForm from '../../Global/Form/MyForm'
-import { useEffect, useState, createContext, useRef } from 'react'
+import { useEffect, useState, createContext, useRef, useContext } from 'react'
 import SelectField from '../../Global/SelectField'
 import InputField from '../../Global/InputField'
 import axios from 'axios'
 import formatData, { removeSpaces } from '../../Global/Functions/formatData'
+import { DialogBoxContext } from '../../Global/DialogBox'
 
 const FormContext = createContext()
 
@@ -28,6 +29,8 @@ export default function AddCategory() {
     const count = useRef(0)
 
     const [subCategories, setSubCategories] = useState({})
+
+    const {dialogBox, setDialogBox, resetDialogBox} = useContext(DialogBoxContext)
 
     // const categoryFields = useRef({
     //     'Category': {value: '', placeholder: '', type: 'text', ref : {}},
@@ -55,19 +58,28 @@ export default function AddCategory() {
 
     function submitCategory(e){
         axios.post('/category', {category: categoryFields['Category'].value.trim(), subCategories: [categoryFields['Sub-Category'].value.trim(), ...Object.values(subCategories).map(sub => sub.value.trim())]})
-        .then(res => console.log(res))
+        .then(res => {
+            let msg = res.data
+            setDialogBox(prev => ({msg, confirm: resetDialogBox, close: null, show: true}))
+        })
         .catch(error => {
+            let msg
             if (error.response) {
                 // The server responded with a status other than 200 range
                 console.error('Error Status:', error.response.status);  // 409
                 console.error('Error Message:', error.response.data);  // 'Error Handled'
+                msg = error.response.data
             } else if (error.request) {
                 // The request was made but no response was received
                 console.error('No response received:', error.request);
+                msg = 'No response received'
             } else {
                 // Something happened in setting up the request that triggered an Error
                 console.error('Error in request setup:', error.message);
+                msg = error.message
             }
+
+            setDialogBox(prev => ({msg, confirm: resetDialogBox, close: null, show: true}))
         })
     }
 

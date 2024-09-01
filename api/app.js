@@ -148,6 +148,7 @@ app.post('/category', jsonParser, async (req, res) => {
         }
       }
     await con.commit()
+    res.status(200).send('Category created successfully.');
   }
   catch(err){
     console.log(err)
