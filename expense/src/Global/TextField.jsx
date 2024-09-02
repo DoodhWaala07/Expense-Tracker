@@ -1,6 +1,7 @@
 import { useContext } from "react"
 import { FormContext } from "./Form/MyForm"
 import Error from "./Error"
+import CoreField from "./CoreField"
 
 export default function TextField({label, placeholder, id}){
     const {fields, setFields} = useContext(FormContext)
@@ -17,13 +18,14 @@ export default function TextField({label, placeholder, id}){
     return(
         <div className='searchFieldWrapper'>
             {/* <label className='fieldLabel'>{label.replaceAll('_', ' ')}</label><br/> */}
-            <input type="text" className="inputField" 
+            {/* <input type="text" className="inputField" 
             value={fields[id].value} onChange={onChange} 
             placeholder={placeholder.replaceAll('_', ' ')}
             ref={fields[id].ref}
             style={{border: fields[id].error ? '1px solid red' : ''}}
             onClick={onClick}
-            />
+            /> */}
+            <CoreField label={label} placeholder={placeholder} id={id} type={'text'} onClick={onClick} onChange={onChange} value={fields[id].value}/>
         </div>
     )
 }

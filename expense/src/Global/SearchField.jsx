@@ -93,12 +93,13 @@ export default function SearchField({label, placeholder, type, id}){
         <ValueContext.Provider value = {[setResults, setValue, setFieldValue, setFields, fields]}>    
         <div className='searchFieldWrapper' ref={parentRef} >
             {/* <label className='fieldLabel'>{label.replaceAll('_', ' ')}</label><br /> */}
-            <input className='inputField' placeholder={placeholder.replaceAll('_', ' ')} 
+            {/* <input className='inputField' placeholder={placeholder.replaceAll('_', ' ')} 
             style={{cursor: 'pointer', border: fields[id].error ? '1px solid red' : ''}} 
             onClick={(e) => clickFunction(e)} onFocus={null}  onBlur={onBlur} 
             value={value}
             ref={fields[id].ref}
-            />
+            /> */}
+            <CoreField label={label} placeholder={placeholder} id={id} type={type} onClick={clickFunction} onBlur={onBlur} onFocus={null} value={value}/>
             <SearchResults results={results} label={label} id={id}/>
             {/* <div onClick={() => console.log(results)}>Test</div> */}
         </div>

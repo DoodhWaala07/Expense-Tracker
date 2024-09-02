@@ -1,7 +1,7 @@
 export function validateEmptyFields(fields, setFields) {
     let errors = {}
     Object.entries(fields).forEach(([key, field]) => {
-        if (field.value === "") {
+        if (field.value.trim() === "") {
             errors[key] = `${field.label || key} cannot be empty`
         }
     })
