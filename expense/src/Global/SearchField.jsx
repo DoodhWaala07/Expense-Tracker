@@ -3,6 +3,7 @@ import './inputFields.css'
 import { FieldsContext } from './SearchForm'
 import Spinner from './Spinner'
 import { FormContext } from './Form/MyForm'
+import CoreField from './CoreField'
 
 const list = ['Grocery', 'Transport', 'Rent', 'Gas', 'Electricity', 'Water', 'Misc.']
 
