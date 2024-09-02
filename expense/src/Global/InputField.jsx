@@ -1,8 +1,9 @@
 import SelectField from "./SelectField";
 import TextField from "./TextField";
 import SearchField from "./SearchField";
+import Error from "./Error";
    
-export default function InputField({label, placeholder, id, type}){
+export default function InputField({label, placeholder, id, type, error}){
     let ComponentToRender;
   
     switch (type) {
@@ -19,6 +20,9 @@ export default function InputField({label, placeholder, id, type}){
         ComponentToRender = TextField;
     }
     return(
-        <ComponentToRender label={label} placeholder={placeholder} id={id}/>
+        <div className='inputFieldWrapper'>
+          <ComponentToRender label={label} placeholder={placeholder} id={id}/>
+          <Error msg={error}/>
+        </div>
     )
 }

@@ -8,6 +8,7 @@ import InputField from '../../Global/InputField'
 import axios from 'axios'
 import formatData, { removeSpaces } from '../../Global/Functions/formatData'
 import { DialogBoxContext } from '../../Global/DialogBox'
+import { validateEmptyFields } from '../../Global/Functions/validation'
 
 const FormContext = createContext()
 
@@ -23,8 +24,8 @@ function getRandomColor() {
 
 export default function AddCategory() {
     const defaultCategoryFields = {
-        'Category': {value: '', placeholder: '', type: 'text', ref: {}},
-        'Sub-Category': {value: '', placeholder: '', type: 'text', ref: {}},
+        'Category': {value: '', placeholder: '', type: 'text', ref: {}, req: true, error: ''},
+        'Sub-Category': {value: '', placeholder: '', type: 'text', ref: {}, req: true},
         'Select': {value: '', placeholder: '', type: 'select', ref: {}},
     }
     const [categoryFields, setCategoryFields] = useState(defaultCategoryFields)
@@ -66,6 +67,9 @@ export default function AddCategory() {
     }
 
     function submitCategory(e){
+        if(Object.keys(validateEmptyFields(categoryFields, setCategoryFields)).length > 0 ){
+            return null
+        }
         axios.post('/category', {category: categoryFields['Category'].value.trim(), subCategories: [categoryFields['Sub-Category'].value.trim(), ...Object.values(subCategories).map(sub => sub.value.trim())]})
         .then(res => {
             let msg = res.data
@@ -105,7 +109,7 @@ export default function AddCategory() {
         <div className = 'addCatMain'>
             <MyForm fields = {categoryFields} setFields={setCategoryFields}>
                {Object.entries(categoryFields).map(([key, field], i) => (
-                <InputField key = {i} id = {key} label = {field.label || key} placeholder = {field.label || field.placeholder || key} type = {field.type} ref = {field.ref} />
+                <InputField key = {i} id = {key} label = {field.label || key} placeholder = {field.label || field.placeholder || key} type = {field.type} ref = {field.ref} error={field.error}/>
 
                ))}
                
@@ -114,7 +118,7 @@ export default function AddCategory() {
                 {Object.entries(subCategories).map(([key, field], i) => (
                     <div className='subCatWrapper'>
                         <button className='removeFieldBtn btn' onClick={(e) => removeSubCategory(e, key)}>X</button>
-                        <InputField key = {i} id = {key} label = {field.label || key} placeholder = {field.label || field.placeholder || key} type = {field.type} ref = {field.ref} />
+                        <InputField key = {i} id = {key} label = {field.label || key} placeholder = {field.label || field.placeholder || key} type = {field.type} ref = {field.ref} error={field.error}/>
                     </div>
                ))}
             </MyForm>

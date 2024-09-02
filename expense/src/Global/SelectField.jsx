@@ -46,6 +46,9 @@ export default function SelectField({label, placeholder, type, id}){
         // console.log(results)
         
         setValue()
+        setFields(prev => {
+            return {...prev, [id]: {...prev[id], error: ''}}
+        })
         if(results === undefined){
             // console.log('test')
             showResults()
@@ -94,7 +97,10 @@ export default function SelectField({label, placeholder, type, id}){
         <ValueContext.Provider value = {[setResults, setValue, setFieldValue, setFields, fields]}>    
         <div className='searchFieldWrapper' ref={parentRef} >
             {/* <label className='fieldLabel'>{label.replaceAll('_', ' ')}</label><br /> */}
-            <input className='inputField' placeholder={placeholder.replaceAll('_', ' ')} style={{cursor: 'pointer'}} onClick={(e) => clickFunction(e)} onFocus={null}  onBlur={onBlur} 
+            <input className='inputField' placeholder={placeholder.replaceAll('_', ' ')} 
+            style={{cursor: 'pointer', border: fields[id].error ? '1px solid red' : ''}} 
+            onClick={(e) => clickFunction(e)} 
+            onFocus={null}  onBlur={onBlur} 
             value={value}
             ref={fields[id].ref}
             readOnly/>

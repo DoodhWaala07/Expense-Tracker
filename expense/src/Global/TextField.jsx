@@ -1,11 +1,17 @@
 import { useContext } from "react"
 import { FormContext } from "./Form/MyForm"
+import Error from "./Error"
 
 export default function TextField({label, placeholder, id}){
     const {fields, setFields} = useContext(FormContext)
     function onChange(e){
         setFields(prev => {
             return {...prev, [id]: {...prev[id], value: e.target.value}}
+        })
+    }
+    function onClick(){
+        setFields(prev => {
+            return {...prev, [id]: {...prev[id], error: ''}}
         })
     }
     return(
@@ -15,6 +21,8 @@ export default function TextField({label, placeholder, id}){
             value={fields[id].value} onChange={onChange} 
             placeholder={placeholder.replaceAll('_', ' ')}
             ref={fields[id].ref}
+            style={{border: fields[id].error ? '1px solid red' : ''}}
+            onClick={onClick}
             />
         </div>
     )

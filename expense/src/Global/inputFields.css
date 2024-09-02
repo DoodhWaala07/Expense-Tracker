@@ -136,3 +136,17 @@
   text-align: middle;
 }
   
+.field-error{
+    color: red;
+    /* border: 1px solid; */
+    margin-top: 0px;
+    margin-bottom: 5px;
+    font-size: small;
+    margin-left: 10px;
+}
+
+.inputFieldWrapper{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
