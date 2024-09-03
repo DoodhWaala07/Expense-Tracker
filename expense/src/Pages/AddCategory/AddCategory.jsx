@@ -26,7 +26,7 @@ export default function AddCategory() {
     const defaultCategoryFields = {
         'Category': {value: '', placeholder: '', type: 'text', ref: {}, req: true, error: ''},
         'Sub-Category': {value: '', placeholder: '', type: 'text', ref: {}, req: true},
-        'Select': {value: '', placeholder: '', type: 'select', ref: {}},
+        // 'Select': {value: '', placeholder: '', type: 'select', ref: {}},
     }
     const [categoryFields, setCategoryFields] = useState(defaultCategoryFields)
     const count = useRef(0)
@@ -114,16 +114,47 @@ export default function AddCategory() {
                ))}
                
             </MyForm>
-            <MyForm fields = {subCategories} setFields={setSubCategories}>
+           
+            <SubCategories subCategories = {subCategories} setSubCategories = {setSubCategories}/>
+            <button className='btn' onClick={(e) => submitCategory(e)}>Add Category</button>
+        </div>
+    )
+}
+
+export function SubCategories({subCategories, setSubCategories}) {
+
+    const count = useRef(0)
+
+    function addSubCategory(e) {
+        e.preventDefault()
+        setSubCategories(prev => {
+            count.current += 1
+            return {
+                ...prev,
+                [`Sub-Category_${count.current}`]:  {label: `Sub-Category`, value: '', placeholder: '', type: 'text', ref: {}}
+            }
+        })
+    }
+
+    function removeSubCategory(e, id) {
+        e.preventDefault()
+        setSubCategories(prev => {
+            delete prev[id]
+            return {...prev}
+        })
+    }
+
+    return(
+        <>
+        <MyForm fields = {subCategories} setFields={setSubCategories}>
                 {Object.entries(subCategories).map(([key, field], i) => (
                     <div className='subCatWrapper'>
                         <button className='removeFieldBtn btn' onClick={(e) => removeSubCategory(e, key)}>X</button>
                         <InputField key = {i} id = {key} label = {field.label || key} placeholder = {field.label || field.placeholder || key} type = {field.type} ref = {field.ref} error={field.error}/>
                     </div>
                ))}
-            </MyForm>
-            <p className='addCat-new-p' onClick={(e) => addSubCategory(e)}>Add new</p>
-            <button className='btn' onClick={(e) => submitCategory(e)}>Add Category</button>
-        </div>
+        </MyForm>
+        <p className='addCat-new-p' onClick={(e) => addSubCategory(e)}>Add new</p>
+        </>
     )
 }

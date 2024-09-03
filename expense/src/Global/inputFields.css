@@ -99,6 +99,8 @@
     background-color: white;
     user-select: none;
     z-index: 1;
+    max-height: 200px;
+    overflow-y: scroll;
   }
 
   .searchItem{

@@ -3,7 +3,7 @@ import TextField from "./TextField";
 import SearchField from "./SearchField";
 import Error from "./Error";
    
-export default function InputField({label, placeholder, id, type, error}){
+export default function InputField({label, placeholder, id, type, error, search}){
     let ComponentToRender;
   
     switch (type) {
@@ -21,7 +21,7 @@ export default function InputField({label, placeholder, id, type, error}){
     }
     return(
         <div className='inputFieldWrapper'>
-          <ComponentToRender label={label} placeholder={placeholder} id={id}/>
+          <ComponentToRender label={label} placeholder={placeholder} id={id} search={search}/>
           <Error msg={error}/>
         </div>
     )

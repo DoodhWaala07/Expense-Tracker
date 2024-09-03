@@ -163,3 +163,20 @@ app.post('/category', jsonParser, async (req, res) => {
 
   // console.log(req.body)
 })
+
+app.get('/category', async (req, res) => {
+  console.log('GET CATEGORY')
+  let con
+  try{
+    con = await pool.getConnection()
+    let sql = 'SELECT * FROM category'
+    let result = await con.query(sql)
+    res.send(result[0])
+  } catch(err){
+    console.log(err)
+  } finally{
+    if(con){
+      con.release()
+    }
+  }
+})  

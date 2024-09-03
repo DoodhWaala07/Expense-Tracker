@@ -9,7 +9,7 @@ const list = ['Grocery', 'Transport', 'Rent', 'Gas', 'Electricity', 'Water', 'Mi
 
 const ValueContext = createContext()
 
-export default function SelectField({label, placeholder, type, id}){
+export default function SelectField({label, placeholder, type, id, search}){
     const {fields, setFields} = useContext(FormContext)
     const [listToggle, setListToggle] = useState(false)
     const [value, setValue] = useState(fields[id].value)
@@ -51,16 +51,19 @@ export default function SelectField({label, placeholder, type, id}){
             return {...prev, [id]: {...prev[id], error: ''}}
         })
         if(results === undefined){
-            // console.log('test')
-            showResults()
+            console.log('test')
+            showResults(e)
             // e.target.removeAttribute('readonly')
         } else if (results !== undefined){
+            console.log('test2')
             e.target.removeAttribute('readonly')
         }
     }
 
-    function showResults(){
-        setResults(prev => [...list])
+    function showResults(e){
+        // console.log('Hello')
+        search({input: e.target.value, setState: setResults})
+        // setResults(prev => [...list])
     }
     
     function hideResults(){
