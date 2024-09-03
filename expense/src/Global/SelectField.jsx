@@ -40,13 +40,13 @@ export default function SelectField({label, placeholder, type, id}){
 
     useEffect(() => {
         setValue(fields[id].value)
+        setValue()
     }, [fields])
 
     function clickFunction(e){
         // e.preventDefault()
         // console.log(results)
         
-        setValue()
         setFields(prev => {
             return {...prev, [id]: {...prev[id], error: ''}}
         })
@@ -94,6 +94,10 @@ export default function SelectField({label, placeholder, type, id}){
         e.target.setAttribute('readonly', true)
         hideResults()
     }
+
+    function onChange(){
+        // fields[id].search()
+    }
     return(
         <ValueContext.Provider value = {[setResults, setValue, setFieldValue, setFields, fields]}>    
         <div className='searchFieldWrapper' ref={parentRef} >
@@ -106,7 +110,7 @@ export default function SelectField({label, placeholder, type, id}){
             ref={fields[id].ref}
             readOnly/> */}
 
-            <CoreField label={label} placeholder={placeholder} id={id} type={type} onClick={clickFunction} onBlur={onBlur} onFocus={null} value={value}/>
+            <CoreField label={label} placeholder={placeholder} id={id} type={type} onClick={clickFunction} onBlur={onBlur} onFocus={null} onChange={onChange} value={value}/>
             {/* <CoreField label={label} placeholder={placeholder} id={id} type={'text'} onClick={onClick} onChange={onChange} onBlur={onBlur} value={fields[id].value} /> */}
 
             <SearchResults results={results} label={label} id={id}/>

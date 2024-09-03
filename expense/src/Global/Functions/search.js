@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 export default function search({input, type = '', setState, api}){
     // console.log('Testing123')
     let req = {'input': input, 'type': type}
@@ -23,4 +25,16 @@ export default function search({input, type = '', setState, api}){
         }
     })
 } else {setState()}
+}
+
+
+export function getCategories({input}){
+    try{
+        axios.get(`/category`)
+        .then(res => {
+            console.log(res)
+        })
+    } catch(err){
+        console.log(err)
+    }
 }
