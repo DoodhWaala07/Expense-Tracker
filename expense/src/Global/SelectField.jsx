@@ -4,19 +4,26 @@ import { FieldsContext } from './SearchForm'
 import Spinner from './Spinner'
 import { FormContext } from './Form/MyForm'
 import CoreField from './CoreField'
+import search from './Functions/search'
 
 const list = ['Grocery', 'Transport', 'Rent', 'Gas', 'Electricity', 'Water', 'Misc.']
 
 const ValueContext = createContext()
 
-export default function SelectField({label, placeholder, type, id, search}){
+export default function SelectField({label, placeholder, type, id, api, list}){
     const {fields, setFields} = useContext(FormContext)
     const [listToggle, setListToggle] = useState(false)
     const [value, setValue] = useState(fields[id].value)
     const [fieldValue, setFieldValue] = useState()
     const parentRef = useRef()
 
-    const [results, setResults] = useState()
+    //results = {laoding: true, data: ['test', 'test2']}
+    const [results, setResults] = useState({
+        loading: false,
+        data: undefined
+    })
+
+    // const [results, setResults] = useState()
 
     function focusOut(){
         console.log('Focus Out')
@@ -50,11 +57,11 @@ export default function SelectField({label, placeholder, type, id, search}){
         setFields(prev => {
             return {...prev, [id]: {...prev[id], error: ''}}
         })
-        if(results === undefined){
+        if(results.data === undefined){
             console.log('test')
             showResults(e)
             // e.target.removeAttribute('readonly')
-        } else if (results !== undefined){
+        } else if (results.data !== undefined){
             console.log('test2')
             e.target.removeAttribute('readonly')
         }
@@ -62,7 +69,7 @@ export default function SelectField({label, placeholder, type, id, search}){
 
     function showResults(e){
         // console.log('Hello')
-        search({input: e.target.value, setState: setResults})
+        search({input: e.target.value, setState: setResults, api: fields[id].api, list: fields[id].list})
         // setResults(prev => [...list])
     }
     
@@ -86,7 +93,10 @@ export default function SelectField({label, placeholder, type, id, search}){
                     }
                 })
                 console.log(document.activeElement)
-                setResults()
+                setResults({
+                    loading: false,
+                    data: undefined
+                })
                 console.log('Hide')
             } 
         }, 0) 
@@ -102,7 +112,7 @@ export default function SelectField({label, placeholder, type, id, search}){
         // fields[id].search()
     }
     return(
-        <ValueContext.Provider value = {[setResults, setValue, setFieldValue, setFields, fields]}>    
+        <ValueContext.Provider value = {{setResults, setValue, setFieldValue, setFields, fields, value, search}}>    
         <div className='searchFieldWrapper' ref={parentRef} >
             {/* <label className='fieldLabel'>{label.replaceAll('_', ' ')}</label><br /> */}
             {/* <input className='inputField' placeholder={placeholder.replaceAll('_', ' ')} 
@@ -116,7 +126,7 @@ export default function SelectField({label, placeholder, type, id, search}){
             <CoreField label={label} placeholder={placeholder} id={id} type={type} onClick={clickFunction} onBlur={onBlur} onFocus={null} onChange={onChange} value={value}/>
             {/* <CoreField label={label} placeholder={placeholder} id={id} type={'text'} onClick={onClick} onChange={onChange} onBlur={onBlur} value={fields[id].value} /> */}
 
-            <SearchResults results={results} label={label} id={id}/>
+            {<SearchResults results={results} label={label} id={id}/>}
             {/* <div onClick={() => console.log(results)}>Test</div> */}
         </div>
         </ValueContext.Provider>
@@ -126,8 +136,13 @@ export default function SelectField({label, placeholder, type, id, search}){
 
 function SearchResults({results, label, id}){
 
-    let [setResults, setValue, setFieldValue, setFields, fields] = useContext(ValueContext)
+    //results = {laoding: true, data: ['test', 'test2']}
+    let {setResults, setValue, setFieldValue, setFields, fields, search, value} = useContext(ValueContext)
     let fieldValues = useContext(FieldsContext)
+    let resultDiv = useRef()
+
+    // const [page, setPage] = useState(1)
+    const page = useRef(1)
 
     function selectItem(e, item){
         // updateFieldValues(fieldValues.current, label, item)
@@ -149,23 +164,57 @@ function SearchResults({results, label, id}){
         setResults()
         // setResults()
     }
+
+    function handleScroll(e){
+        if(e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight){
+            console.log('Pagination')
+            page.current = page.current + 1
+            search({input: value, setState: setResults, api: fields[id].api, list: fields[id].list, page: page.current})
+        }
+    }
+
+    return (
+        <>
+        {!(results.loading === false && results.data === undefined) &&
+            <div className='searchResultDiv' ref={resultDiv} onScroll={handleScroll}>
+                {results.data?.map((result, i) => {
+                    return (
+                    <>
+                        {results.data?.length === 0 && <div className='noResult'>No results matched your search.</div>}
+                        <div key={i} tabIndex={0} className='searchItem' onClick={(e) => {selectItem(e, result)}} onTouchStart={(e) => (e.target.focus())} >{result.Name || result}</div>
+                    </>
+                    )
+                })
+                }
+                {results.loading &&
+                    <div className='spinnerContainer'>
+                        <Spinner size={'20px'} thickness={'5px'}/>
+                    </div>
+                }
+            </div>
+        }
+
+
+        </>
+    )
+
     if(results == undefined){
         // return console.log('Hello')
     }
     else if(results == 'loading'){
         return(
             //class in spinner
-            <div className='searchResultDiv'>
-            <div className='spinnerContainer'>
-            <Spinner size={'20px'} thickness={'5px'}/>
-            </div>
+            <div className='searchResultDiv' ref={resultDiv}>
+                <div className='spinnerContainer'>
+                    <Spinner size={'20px'} thickness={'5px'}/>
+                </div>
             </div>
         )
     }
     else if(results.length){
         // console.log('Hello2')
         return(
-            <div className='searchResultDiv'>
+            <div className='searchResultDiv' ref={resultDiv}>
                 {results.map((result, i) => {
                     //Replace result.clientName with Generic Thing
                     return <>
@@ -178,13 +227,8 @@ function SearchResults({results, label, id}){
     } else if(results.length == 0){
         // console.log('Hello3')
         return(
-        <div className='searchResultDiv'>
+        <div className='searchResultDiv' ref={resultDiv}>
             <div className='noResult'>No results matched your search.</div>
-            {/* <div className='spinnerContainer'>
-            <Spinner size={'20px'} thickness={'5px'}/>
-            </div> */}
-            {/* <Spinner size={'20px'} thickness={'5px'}/> */}
-            {/* <Button variant="primary">Primary</Button>{' '} */}
         </div>
         )
     }

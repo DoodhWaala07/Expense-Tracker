@@ -164,13 +164,18 @@ app.post('/category', jsonParser, async (req, res) => {
   // console.log(req.body)
 })
 
-app.get('/category', async (req, res) => {
+app.get('/category', jsonParser, async (req, res) => {
   console.log('GET CATEGORY')
+  let {input, type, page, limit} = req.query
+  limit = limit || 10
+  let offset = (parseInt(page) - 1) * 5
   let con
+  console.log(page)
   try{
     con = await pool.getConnection()
-    let sql = 'SELECT * FROM category'
-    let result = await con.query(sql)
+    let sql = 'SELECT * FROM category LIMIT ? OFFSET ?'
+    let result = await con.query(sql, [limit, offset])
+    console.log(result[0])
     res.send(result[0])
   } catch(err){
     console.log(err)

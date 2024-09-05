@@ -8,7 +8,8 @@ import {SubCategories} from '../AddCategory/AddCategory'
 export default function EditCategory() {
     const defaultCategoryFields = {
         // 'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, error: '', search: ({input, setState}) => search({api: '/category', input, setState})},
-        'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, error: '', search: ({input, setState}) => search({api: '/category', input, setState})},
+        // 'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, error: '', search: ({input, setState}) => search({api: '/category', input, setState})},
+        'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, error: '', api: '/category'},
         'Sub-Category': {value: '', placeholder: '', label: 'Sub-Category', type: 'text', ref: {}, req: true},
     }
     const [categoryFields, setCategoryFields] = useState(defaultCategoryFields)

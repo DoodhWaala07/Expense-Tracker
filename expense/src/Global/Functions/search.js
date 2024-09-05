@@ -27,21 +27,69 @@ import axios from 'axios'
 // } else {setState()}
 // }
 
-export default function search({input, type = '', setState, api}){
+export default function search({input, type = '', setState, api, page = 1}){
+    if(api){
+        searchAPI({input, type, setState, api, page})
+    }   
+}
+
+// export function searchAPI({input, type = '', setState, api, page = 1}){
+//     console.log('Testing123')
+//     let req = {'input': input, 'type': type}
+//     // if(input){
+//     // setState(prev => {
+//     //     return 'loading'
+//     // })
+//     try{
+//         axios.get(api, {
+//             params : {
+//                 'page': page,
+//                 'input': input,
+//                 'type': type
+//             }
+//         })
+//         .then(res => {
+//             // console.log(res)
+//             if(res){
+//                 console.log(res.data)
+//                 // setState(prev => [...prev, ...res.data])
+//             } else {
+//                 console.log('No data found')
+//                 // setState()
+//             }
+//         })
+//     } catch(err){
+//         console.log(err)
+//     }
+// // } else {setState()}
+// }
+
+export function searchAPI({input, type = '', setState, api, page = 1, limit}){
     console.log('Testing123')
     let req = {'input': input, 'type': type}
     // if(input){
-    setState('loading')
+    setState(prev => {
+        return {...prev, loading : true}
+    })
     try{
-        axios.get(api)
+        axios.get(api, {
+            params : {
+                'page': page,
+                'input': input,
+                'type': type,
+                'limit': limit
+            }
+        })
         .then(res => {
             // console.log(res)
             if(res){
                 console.log(res.data)
-                setState(res.data)
+                setState(prev => {
+                    return {loading: false, data : prev.data ? [...prev.data, ...res.data] : res.data}
+                })
             } else {
                 console.log('No data found')
-                setState()
+                setState({data: null, loading: false})
             }
         })
     } catch(err){
