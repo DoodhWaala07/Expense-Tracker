@@ -53,8 +53,10 @@ export default function SelectField({label, placeholder, type, id, api, list}){
     }, []);
 
     useEffect(() => {
-        setValue(fields[id].value)
-        setValue()
+        setValue(prev => {
+           return fields[id].value.Name || fields[id].value
+        })
+        // setValue()
     }, [fields])
 
     function clickFunction(e){
@@ -76,7 +78,7 @@ export default function SelectField({label, placeholder, type, id, api, list}){
 
     function showResults(e){
         // console.log('Hello')
-        search({input: e.target.value, setState: setResults, api: fields[id].api, list: fields[id].list})
+        search({input: e.target.value, setState: setResults, api: fields[id].api, list: fields[id].list, metadata: fields[id].metadata})
         // setResults(prev => [...list])
     }
     
@@ -86,7 +88,7 @@ export default function SelectField({label, placeholder, type, id, api, list}){
             if(!parentRef.current.contains(document.activeElement)){
                 setValue(prev => {
                     // let fieldValue = fields.current[label].value
-                    let fieldValue = fields[id].value
+                    let fieldValue = fields[id].value.Name || fields[id].value
                     console.log(fieldValue)
                     console.log(fields)
 
@@ -123,7 +125,7 @@ export default function SelectField({label, placeholder, type, id, api, list}){
             return value
         })
         page.current = 1
-        search({input: value, setState: setResults, api: fields[id].api, list: fields[id].list})
+        search({input: value, setState: setResults, api: fields[id].api, list: fields[id].list, metadata: fields[id].metadata})
         // if(fields[id].list){
         //     setResults(prev => {
         //         // console.log(filterList({list: results.data, input: value}))
@@ -166,8 +168,9 @@ function SearchResults({results, label, id}){
         //     return item.Name || item
         //  })
            setFields(prev => {
-            //    let field = prev[label] 
-               return {...prev, [id]: {...prev[id], value: item.Name || item}}
+            //    let field = prev[label]
+            console.log(item)
+               return {...prev, [id]: {...prev[id], value: item}}
            }) 
         //    fields.current[label].value = item.Name || item
            return item.Name || item

@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 export default function ExpenseRow() {
     const [expenseFields, setExpenseFields] = useState({
         'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, api: '/category'},
-        'Sub-Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, disabled: true},
+        'Sub-Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, disabled: true, api: '/subcategory'},
         'Quantity': {value: '', placeholder: '', type: 'number', ref: {}, req: true},
         'Amount': {value: '', placeholder: '', type: 'number', ref: {}, req: true},
         'Note': {value: '', placeholder: '', type: 'text', ref: {}, req: true},
@@ -14,12 +14,12 @@ export default function ExpenseRow() {
 
     useEffect(() => {
         console.log('Changing Category')
-        let value = expenseFields['Category'].value
-        if(value) {
+        let value2 = expenseFields['Category'].value
+        if(value2) {
             setExpenseFields(prev => {
                 return {
                     ...prev,
-                    'Sub-Category': {...prev['Sub-Category'], disabled: false, value: ''}
+                    'Sub-Category': {...prev['Sub-Category'], disabled: false, value: '', metadata: value2}
                 }
             })
         } else {
@@ -30,7 +30,7 @@ export default function ExpenseRow() {
                 }
             })
         }
-    }, [expenseFields['Category'].value])
+    }, [expenseFields['Category']])
 
     return(
         <div className='expRowWrapper'>

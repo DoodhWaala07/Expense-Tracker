@@ -27,9 +27,9 @@ import axios from 'axios'
 // } else {setState()}
 // }
 
-export default function search({input, type = '', setState, api, page = 1, list, pagination = false}){
+export default function search({input, type = '', setState, api, page = 1, list, pagination = false, metadata}){
     if(api){
-        searchAPI({input, type, setState, api, page, pagination})
+        searchAPI({input, type, setState, api, page, pagination, metadata})
     }
     if(list){
         staticLists({input, type, setState, api, page, list})
@@ -67,7 +67,7 @@ export default function search({input, type = '', setState, api, page = 1, list,
 // // } else {setState()}
 // }
 
-export function searchAPI({input, type = '', setState, api, page = 1, limit, pagination}){
+export function searchAPI({input, type = '', setState, api, page = 1, limit, pagination, metadata}){
     console.log('Testing123')
     let req = {'input': input, 'type': type}
     // if(input){
@@ -80,7 +80,8 @@ export function searchAPI({input, type = '', setState, api, page = 1, limit, pag
                 'page': page,
                 'input': input,
                 'type': type,
-                'limit': limit
+                'limit': limit,
+                'metadata': metadata
             }
         })
         .then(res => {

@@ -194,4 +194,33 @@ app.get('/category', jsonParser, async (req, res) => {
       con.release()
     }
   }
-})  
+})
+
+app.get('/subcategory', jsonParser, async (req, res) => {
+  console.log('GET SUBCATEGORY')
+  let {input, type, page, limit, metadata} = req.query
+  console.log(metadata)
+  let catId = metadata.ID
+  input ? whereClause = 'AND Name LIKE ? ' : whereClause = ''
+  limit = limit || 10
+  let offset = (parseInt(page) - 1) * 10
+  let sqlParams = [catId]
+
+  sqlParams = input ? [...sqlParams, `%${input}%`, limit, offset] : [...sqlParams, limit, offset]
+
+  let sql = 'SELECT * FROM sub_category WHERE Category = ? ' + whereClause + 'LIMIT ? OFFSET ?'
+
+  let con
+  try{
+    con = await pool.getConnection()
+    let result = await con.query(sql, sqlParams)
+    console.log(result[0])
+    res.send(result[0])
+  } catch(err){
+    console.log(err)
+  } finally{
+    if(con){
+      con.release()
+    }
+  }
+})
