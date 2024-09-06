@@ -5,11 +5,15 @@ import { useState } from 'react'
 import search, { getCategories } from '../../Global/Functions/search'
 import {SubCategories} from '../AddCategory/AddCategory'
 
+
+const list = ['Grocery', 'Transport', 'Rent', 'Gas', 'Electricity', 'Water', 'Misc.', 'Transportation', 'Grocers', 'Rental']
+
 export default function EditCategory() {
     const defaultCategoryFields = {
         // 'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, error: '', search: ({input, setState}) => search({api: '/category', input, setState})},
         // 'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, error: '', search: ({input, setState}) => search({api: '/category', input, setState})},
         'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, error: '', api: '/category'},
+        'Test': {value: '', placeholder: '', type: 'select', ref: {}, req: true, error: '', list: list},
         'Sub-Category': {value: '', placeholder: '', label: 'Sub-Category', type: 'text', ref: {}, req: true},
     }
     const [categoryFields, setCategoryFields] = useState(defaultCategoryFields)

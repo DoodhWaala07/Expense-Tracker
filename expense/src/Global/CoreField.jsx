@@ -9,6 +9,7 @@ export default function CoreField({label, placeholder, id, type, error, onClick,
         onClick={(e) => onClick(e)} onFocus={onFocus}  onBlur={onBlur} onChange={onChange}
         value={value}
         ref={fields[id].ref}
+        readOnly = {fields[id].type === 'select' || fields[id].type === 'search' ? true : false}
         />
     )
 }

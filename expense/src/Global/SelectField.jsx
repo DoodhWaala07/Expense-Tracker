@@ -4,7 +4,7 @@ import { FieldsContext } from './SearchForm'
 import Spinner from './Spinner'
 import { FormContext } from './Form/MyForm'
 import CoreField from './CoreField'
-import search from './Functions/search'
+import search, { filterList } from './Functions/search'
 
 const list = ['Grocery', 'Transport', 'Rent', 'Gas', 'Electricity', 'Water', 'Misc.']
 
@@ -108,8 +108,8 @@ export default function SelectField({label, placeholder, type, id, api, list}){
         hideResults()
     }
 
-    function onChange(){
-        // fields[id].search()
+    function onChange(e){   
+        setValue(e.target.value)
     }
     return(
         <ValueContext.Provider value = {{setResults, setValue, setFieldValue, setFields, fields, value, search}}>    
@@ -141,6 +141,16 @@ function SearchResults({results, label, id}){
     let fieldValues = useContext(FieldsContext)
     let resultDiv = useRef()
 
+    useEffect(() => {
+        console.log('Changing value')
+        if(fields[id].list){
+            setResults(prev => {
+                console.log(filterList({list: results.data, input: value}))
+                return {...prev, data: value ? filterList({list: fields[id].list, input: value}) : undefined}
+            })
+        }
+    }, [value])
+
     // const [page, setPage] = useState(1)
     const page = useRef(1)
 
@@ -161,7 +171,7 @@ function SearchResults({results, label, id}){
            return item.Name || item
         })
         console.log(fields)
-        setResults()
+        setResults({loading : false, data: undefined})
         // setResults()
     }
 
@@ -175,12 +185,12 @@ function SearchResults({results, label, id}){
 
     return (
         <>
-        {!(results.loading === false && results.data === undefined) &&
+        {!(results.loading === false && (results.data === undefined || results.data === null)) &&
             <div className='searchResultDiv' ref={resultDiv} onScroll={handleScroll}>
+                {results.data?.length === 0 && <div className='noResult'>No results matched your search.</div>}
                 {results.data?.map((result, i) => {
                     return (
                     <>
-                        {results.data?.length === 0 && <div className='noResult'>No results matched your search.</div>}
                         <div key={i} tabIndex={0} className='searchItem' onClick={(e) => {selectItem(e, result)}} onTouchStart={(e) => (e.target.focus())} >{result.Name || result}</div>
                     </>
                     )

@@ -27,10 +27,13 @@ import axios from 'axios'
 // } else {setState()}
 // }
 
-export default function search({input, type = '', setState, api, page = 1}){
+export default function search({input, type = '', setState, api, page = 1, list}){
     if(api){
         searchAPI({input, type, setState, api, page})
-    }   
+    }
+    if(list){
+        staticLists({input, type, setState, api, page, list})
+    }
 }
 
 // export function searchAPI({input, type = '', setState, api, page = 1}){
@@ -98,13 +101,12 @@ export function searchAPI({input, type = '', setState, api, page = 1, limit}){
 // } else {setState()}
 }
 
-export function getCategories({input}){
-    try{
-        axios.get(`/category`)
-        .then(res => {
-            console.log(res.data)
-        })
-    } catch(err){
-        console.log(err)
-    }
+export function staticLists({input, type = '', setState, api, page = 1, list}){
+    setState(prev => {
+        return {...prev, data: list}
+    })
+}
+
+export function filterList({list, input}){
+    return list?.filter(item => item.toLowerCase().includes(input?.toLowerCase()))
 }
