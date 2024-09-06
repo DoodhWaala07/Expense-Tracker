@@ -235,9 +235,15 @@ app.post('/subcategory', jsonParser, async (req, res) => {
 
   try{
     con = await pool.getConnection()
-    await con.query(sql, [subcategory, catId])
+    for(const sub of subcategory){
+      await con.query(sql, [sub, catId])
+    }
+    // await con.query(sql, [subcategory, catId])
     res.status(200).send('Sub-Category created successfully.')
   } catch(err){
+    if(con){
+      con.rollback()
+    }
     if(err.code === 'ER_DUP_ENTRY'){
       res.status(409).send('Sub-Category already exists.')
     }

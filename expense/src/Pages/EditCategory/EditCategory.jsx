@@ -39,7 +39,7 @@ export default function EditCategory() {
         e.preventDefault()
         try{
             axios.post('/subcategory', {
-                subcategory: categoryFields['Sub-Category'].value.trim(),
+                subcategory: [categoryFields['Sub-Category'].value.trim(), ...Object.values(subCategories).map(subcategory => subcategory.value)],
                 category: categoryFields['Category'].value
             }).then(res => {
                 let msg = res.data
