@@ -109,7 +109,14 @@ export default function SelectField({label, placeholder, type, id, api, list}){
     }
 
     function onChange(e){   
-        setValue(e.target.value)
+        // setValue(e.target.value)
+        let value = e.target.value
+        if(fields[id].list){
+            setResults(prev => {
+                // console.log(filterList({list: results.data, input: value}))
+                return {...prev, data: value ? filterList({list: fields[id].list, input: value}) : undefined}
+            })
+        }
     }
     return(
         <ValueContext.Provider value = {{setResults, setValue, setFieldValue, setFields, fields, value, search}}>    
@@ -141,15 +148,10 @@ function SearchResults({results, label, id}){
     let fieldValues = useContext(FieldsContext)
     let resultDiv = useRef()
 
-    useEffect(() => {
-        console.log('Changing value')
-        if(fields[id].list){
-            setResults(prev => {
-                console.log(filterList({list: results.data, input: value}))
-                return {...prev, data: value ? filterList({list: fields[id].list, input: value}) : undefined}
-            })
-        }
-    }, [value])
+    // useEffect(() => {
+    //     console.log('Changing value')
+        
+    // }, [value])
 
     // const [page, setPage] = useState(1)
     const page = useRef(1)
