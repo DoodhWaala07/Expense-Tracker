@@ -224,3 +224,27 @@ app.get('/subcategory', jsonParser, async (req, res) => {
     }
   }
 })
+
+app.post('/subcategory', jsonParser, async (req, res) => {
+  let {category, subcategory} = req.body
+  let catId = category.ID
+
+  let sql = 'INSERT INTO sub_category (Name, Category) VALUES (?, ?)'
+
+  let con
+
+  try{
+    con = await pool.getConnection()
+    await con.query(sql, [subcategory, catId])
+    res.status(200).send('Sub-Category created successfully.')
+  } catch(err){
+    if(err.code === 'ER_DUP_ENTRY'){
+      res.status(409).send('Sub-Category already exists.')
+    }
+    throw new Error('Failed to create sub-category.')
+  } finally{
+    if(con){
+      con.release()
+    }
+  }
+})

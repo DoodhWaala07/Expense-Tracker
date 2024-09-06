@@ -13,3 +13,7 @@
     /* border: 1px solid; */
     gap: 5px;
 }
+
+.editCategory-main .btn{
+    width: 70%;
+}
