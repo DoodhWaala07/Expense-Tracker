@@ -111,30 +111,19 @@ export default function SelectField({label, placeholder, type, id, api, list}){
     function onChange(e){   
         // setValue(e.target.value)
         let value = e.target.value
-        if(fields[id].list){
-            setResults(prev => {
-                // console.log(filterList({list: results.data, input: value}))
-                return {...prev, data: value ? filterList({list: fields[id].list, input: value}) : undefined}
-            })
-        }
+        search({input: value, setState: setResults, api: fields[id].api, list: fields[id].list})
+        // if(fields[id].list){
+        //     setResults(prev => {
+        //         // console.log(filterList({list: results.data, input: value}))
+        //         return {...prev, data: value ? filterList({list: fields[id].list, input: value}) : undefined}
+        //     })
+        // }
     }
     return(
         <ValueContext.Provider value = {{setResults, setValue, setFieldValue, setFields, fields, value, search}}>    
         <div className='searchFieldWrapper' ref={parentRef} >
-            {/* <label className='fieldLabel'>{label.replaceAll('_', ' ')}</label><br /> */}
-            {/* <input className='inputField' placeholder={placeholder.replaceAll('_', ' ')} 
-            style={{cursor: 'pointer', border: fields[id].error ? '1px solid red' : ''}} 
-            onClick={(e) => clickFunction(e)} 
-            onFocus={null}  onBlur={onBlur} 
-            value={value}
-            ref={fields[id].ref}
-            readOnly/> */}
-
             <CoreField label={label} placeholder={placeholder} id={id} type={type} onClick={clickFunction} onBlur={onBlur} onFocus={null} onChange={onChange} value={value}/>
-            {/* <CoreField label={label} placeholder={placeholder} id={id} type={'text'} onClick={onClick} onChange={onChange} onBlur={onBlur} value={fields[id].value} /> */}
-
             {<SearchResults results={results} label={label} id={id}/>}
-            {/* <div onClick={() => console.log(results)}>Test</div> */}
         </div>
         </ValueContext.Provider>
     )
