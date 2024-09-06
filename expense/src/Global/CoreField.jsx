@@ -10,6 +10,7 @@ export default function CoreField({label, placeholder, id, type, error, onClick,
         value={value}
         ref={fields[id].ref}
         readOnly = {fields[id].type === 'select' || fields[id].type === 'search' ? true : false}
+        disabled = {fields[id].disabled === null || fields[id].disabled  === undefined ? false : fields[id].disabled} 
         />
     )
 }
