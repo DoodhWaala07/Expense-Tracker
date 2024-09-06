@@ -27,9 +27,9 @@ import axios from 'axios'
 // } else {setState()}
 // }
 
-export default function search({input, type = '', setState, api, page = 1, list}){
+export default function search({input, type = '', setState, api, page = 1, list, pagination = false}){
     if(api){
-        searchAPI({input, type, setState, api, page})
+        searchAPI({input, type, setState, api, page, pagination})
     }
     if(list){
         staticLists({input, type, setState, api, page, list})
@@ -67,7 +67,7 @@ export default function search({input, type = '', setState, api, page = 1, list}
 // // } else {setState()}
 // }
 
-export function searchAPI({input, type = '', setState, api, page = 1, limit}){
+export function searchAPI({input, type = '', setState, api, page = 1, limit, pagination}){
     console.log('Testing123')
     let req = {'input': input, 'type': type}
     // if(input){
@@ -88,7 +88,9 @@ export function searchAPI({input, type = '', setState, api, page = 1, limit}){
             if(res){
                 console.log(res.data)
                 setState(prev => {
-                    return {loading: false, data : prev.data ? [...prev.data, ...res.data] : res.data}
+                    let dummy
+                    return dummy = pagination ? {loading: false, data : prev.data ? [...prev.data, ...res.data] : res.data} : {...prev, loading: false, data : res.data}
+                    // return {...prev, loading: false, data : res.data}
                 })
             } else {
                 console.log('No data found')
@@ -113,3 +115,4 @@ export function staticLists({input, type = '', setState, api, page = 1, list}){
 export function filterList({list, input}){
     return list?.filter(item => item.toLowerCase().includes(input?.toLowerCase()))
 }
+

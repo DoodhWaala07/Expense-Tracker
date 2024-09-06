@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useRef, useEffect } from 'react'
+import { createContext, useContext, useState, useRef, useEffect, useDebugValue } from 'react'
 import './inputFields.css'
 import { FieldsContext } from './SearchForm'
 import Spinner from './Spinner'
@@ -16,6 +16,7 @@ export default function SelectField({label, placeholder, type, id, api, list}){
     const [value, setValue] = useState(fields[id].value)
     const [fieldValue, setFieldValue] = useState()
     const parentRef = useRef()
+    const page = useRef(1)
 
     //results = {laoding: true, data: ['test', 'test2']}
     const [results, setResults] = useState({
@@ -28,6 +29,12 @@ export default function SelectField({label, placeholder, type, id, api, list}){
     function focusOut(){
         console.log('Focus Out')
     }
+
+    useEffect(() => {
+        if((results.loading === false && (results.data === undefined || results.data === null))){
+            page.current = 1
+        }
+    }, [results])
 
     useEffect(() => {
         const handleTouchStart = (e) => {
@@ -111,6 +118,8 @@ export default function SelectField({label, placeholder, type, id, api, list}){
     function onChange(e){   
         // setValue(e.target.value)
         let value = e.target.value
+        console.log('Changing')
+        page.current = 1
         search({input: value, setState: setResults, api: fields[id].api, list: fields[id].list})
         // if(fields[id].list){
         //     setResults(prev => {
@@ -120,10 +129,10 @@ export default function SelectField({label, placeholder, type, id, api, list}){
         // }
     }
     return(
-        <ValueContext.Provider value = {{setResults, setValue, setFieldValue, setFields, fields, value, search}}>    
+        <ValueContext.Provider value = {{setResults, setValue, setFieldValue, setFields, fields, value, search, page}}>    
         <div className='searchFieldWrapper' ref={parentRef} >
             <CoreField label={label} placeholder={placeholder} id={id} type={type} onClick={clickFunction} onBlur={onBlur} onFocus={null} onChange={onChange} value={value}/>
-            {<SearchResults results={results} label={label} id={id}/>}
+            {!(results.loading === false && (results.data === undefined || results.data === null)) && <SearchResults results={results} label={label} id={id}/>}
         </div>
         </ValueContext.Provider>
     )
@@ -133,7 +142,7 @@ export default function SelectField({label, placeholder, type, id, api, list}){
 function SearchResults({results, label, id}){
 
     //results = {laoding: true, data: ['test', 'test2']}
-    let {setResults, setValue, setFieldValue, setFields, fields, search, value} = useContext(ValueContext)
+    let {setResults, setValue, setFieldValue, setFields, fields, search, value, page} = useContext(ValueContext)
     let fieldValues = useContext(FieldsContext)
     let resultDiv = useRef()
 
@@ -143,7 +152,6 @@ function SearchResults({results, label, id}){
     // }, [value])
 
     // const [page, setPage] = useState(1)
-    const page = useRef(1)
 
     function selectItem(e, item){
         // updateFieldValues(fieldValues.current, label, item)
@@ -170,13 +178,14 @@ function SearchResults({results, label, id}){
         if(e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight){
             console.log('Pagination')
             page.current = page.current + 1
-            search({input: value, setState: setResults, api: fields[id].api, list: fields[id].list, page: page.current})
+            console.log(page.current)
+            search({input: value, setState: setResults, api: fields[id].api, list: fields[id].list, page: page.current, pagination: true})
         }
     }
 
     return (
         <>
-        {!(results.loading === false && (results.data === undefined || results.data === null)) &&
+        {
             <div className='searchResultDiv' ref={resultDiv} onScroll={handleScroll}>
                 {results.data?.length === 0 && <div className='noResult'>No results matched your search.</div>}
                 {results.data?.map((result, i) => {
