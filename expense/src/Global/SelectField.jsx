@@ -119,6 +119,9 @@ export default function SelectField({label, placeholder, type, id, api, list}){
         // setValue(e.target.value)
         let value = e.target.value
         console.log('Changing')
+        setValue(prev => {
+            return value
+        })
         page.current = 1
         search({input: value, setState: setResults, api: fields[id].api, list: fields[id].list})
         // if(fields[id].list){

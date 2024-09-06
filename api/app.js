@@ -167,14 +167,24 @@ app.post('/category', jsonParser, async (req, res) => {
 app.get('/category', jsonParser, async (req, res) => {
   console.log('GET CATEGORY')
   let {input, type, page, limit} = req.query
+  input ? whereClause = 'WHERE Name LIKE ?' : whereClause = ''
   limit = limit || 10
-  let offset = (parseInt(page) - 1) * 5
+  let offset = (parseInt(page) - 1) * 10
+
+  let sqlParams = []
+  input ? sqlParams.push(`%${input}%`) : null
+
+  sqlParams = [...sqlParams, limit, offset]
+
   let con
   console.log(page)
   try{
     con = await pool.getConnection()
-    let sql = 'SELECT * FROM category LIMIT ? OFFSET ?'
-    let result = await con.query(sql, [limit, offset])
+    let sql = 'SELECT * FROM category ' + whereClause + ' LIMIT ? OFFSET ? '
+    console.log(sql)
+    // let sql = 'SELECT * FROM category ' + whereClause
+
+    let result = await con.query(sql, sqlParams)
     console.log(result[0])
     res.send(result[0])
   } catch(err){
