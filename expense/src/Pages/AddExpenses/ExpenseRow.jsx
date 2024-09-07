@@ -1,9 +1,10 @@
 import MyForm from '../../Global/Form/MyForm'
 import InputField from '../../Global/InputField'
 import './expenseRow.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
+import { RowsContext } from './AddExpenses'
 
-export default function ExpenseRow() {
+export default function ExpenseRow({index}) {
     const [expenseFields, setExpenseFields] = useState({
         'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, api: '/category'},
         'Sub-Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, disabled: true, api: '/subcategory'},
@@ -11,6 +12,12 @@ export default function ExpenseRow() {
         'Amount': {value: '', placeholder: '', type: 'number', ref: {}, req: true},
         'Note': {value: '', placeholder: '', type: 'text', ref: {}, req: true},
     })
+
+    const {setRows} = useContext(RowsContext)
+
+    useEffect(() => {
+        setRows[index] = expenseFields
+    }, [expenseFields])
 
     useEffect(() => {
         console.log('Changing Category')

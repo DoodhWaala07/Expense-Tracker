@@ -1,4 +1,5 @@
 import MyForm from '../../Global/Form/MyForm'
+import '../../Global/inputFields.css'
 import './editCategory.css'
 import InputField from '../../Global/InputField'
 import { useContext, useState } from 'react'
@@ -79,7 +80,7 @@ export default function EditCategory() {
             </MyForm>
             {categoryFields['Category'].value && <SubCategories subCategories = {subCategories} setSubCategories = {setSubCategories}/>}
 
-            <button className='btn' onClick={(e) => addSubCategory(e)}>Add Category</button>
+            <button className='btn editCategoryBtn' onClick={(e) => addSubCategory(e)}>Add Category</button>
         </div>
     )
 }

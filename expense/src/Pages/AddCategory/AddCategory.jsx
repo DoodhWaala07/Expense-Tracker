@@ -1,5 +1,5 @@
-import './addCategory.css'
 import '../../Global/inputFields.css'
+import './addCategory.css'
 // import InputField from '../../Global/SelectField'
 import MyForm from '../../Global/Form/MyForm'
 import { useEffect, useState, createContext, useRef, useContext } from 'react'
@@ -116,7 +116,7 @@ export default function AddCategory() {
             </MyForm>
            
             <SubCategories subCategories = {subCategories} setSubCategories = {setSubCategories}/>
-            <button className='btn' onClick={(e) => submitCategory(e)}>Add Category</button>
+            <button className='btn addCategoryBtn' onClick={(e) => submitCategory(e)}>Add Category</button>
         </div>
     )
 }
@@ -149,7 +149,7 @@ export function SubCategories({subCategories, setSubCategories}) {
         <MyForm fields = {subCategories} setFields={setSubCategories}>
                 {Object.entries(subCategories).map(([key, field], i) => (
                     <div className='subCatWrapper'>
-                        <button className='removeFieldBtn btn' onClick={(e) => removeSubCategory(e, key)}>X</button>
+                        <button className='btn removeFieldBtn' onClick={(e) => removeSubCategory(e, key)}>X</button>
                         <InputField key = {i} id = {key} label = {field.label || key} placeholder = {field.label || field.placeholder || key} type = {field.type} ref = {field.ref} error={field.error}/>
                     </div>
                ))}
