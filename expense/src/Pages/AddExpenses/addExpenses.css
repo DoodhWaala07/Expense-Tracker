@@ -32,3 +32,28 @@
     color: rgb(0, 123, 255);
     cursor: pointer;
 }
+
+.addExpenses-globalDetails{
+    width: 100%;
+    padding-bottom: 10px;
+    padding-top: 5px;
+    box-sizing: border-box;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.2);
+    padding: 0px 10px 30px 10px;
+}
+
+.addExpenses-globalDetails .inputField{
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid black;
+    width: 100%;
+    padding-left: 2px;
+    margin: 0
+}
+
+.addExpenses-globalDetails .inputField:focus{
+    outline: none;
+    border-bottom: 1px solid rgb(0, 123, 255);
+}

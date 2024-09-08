@@ -24,7 +24,8 @@ export default function ExpenseRow({index}) {
             // })
             let newObj = {}
             Object.entries(expenseFields).forEach(([key, field]) => {
-                newObj[key] = field.value
+                key = key === 'Sub-Category' ? 'Sub_Category' : key
+                newObj[key] = field.type === 'number' && field.value === '' ? 0 : (field.value.ID || field.value)
             })
             console.log(newObj)
             prev[index] = newObj

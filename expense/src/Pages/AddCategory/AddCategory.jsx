@@ -9,6 +9,7 @@ import axios from 'axios'
 import formatData, { removeSpaces } from '../../Global/Functions/formatData'
 import { DialogBoxContext } from '../../Global/DialogBox'
 import { validateEmptyFields } from '../../Global/Functions/validation'
+import axiosError, { axiosLoading } from '../../Global/Functions/axiosError'
 
 const FormContext = createContext()
 
@@ -70,29 +71,40 @@ export default function AddCategory() {
         if(Object.keys(validateEmptyFields(categoryFields, setCategoryFields)).length > 0 ){
             return null
         }
+        axiosLoading({setDialogBox})
         axios.post('/category', {category: categoryFields['Category'].value.trim(), subCategories: [categoryFields['Sub-Category'].value.trim(), ...Object.values(subCategories).map(sub => sub.value.trim())]})
         .then(res => {
             let msg = res.data
             setDialogBox(prev => ({msg, confirm: confirmAddCategory, close: null, show: true}))
         })
         .catch(error => {
-            let msg
-            if (error.response) {
-                // The server responded with a status other than 200 range
-                console.error('Error Status:', error.response.status);  // 409
-                console.error('Error Message:', error.response.data);  // 'Error Handled'
-                msg = error.response.data
-            } else if (error.request) {
-                // The request was made but no response was received
-                console.error('No response received:', error.request);
-                msg = 'No response received'
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                console.error('Error in request setup:', error.message);
-                msg = error.message
-            }
-            setDialogBox(prev => ({msg, confirm: resetDialogBox, close: null, show: true}))
+            // let msg
+            // if (error.response) {
+            //     // The server responded with a status other than 200 range
+            //     console.error('Error Status:', error.response.status);  // 409
+            //     console.error('Error Message:', error.response.data);  // 'Error Handled'
+            //     msg = error.response.data
+            // } else if (error.request) {
+            //     // The request was made but no response was received
+            //     console.error('No response received:', error.request);
+            //     msg = 'No response received'
+            // } else {
+            //     // Something happened in setting up the request that triggered an Error
+            //     console.error('Error in request setup:', error.message);
+            //     msg = error.message
+            // }
+            // setDialogBox(prev => ({msg, confirm: resetDialogBox, close: null, show: true}))
+            axiosError({error, setDialogBox, resetDialogBox})
         })
+        // try{
+        //     axios.post('/category', {category: categoryFields['Category'].value.trim(), subCategories: [categoryFields['Sub-Category'].value.trim(), ...Object.values(subCategories).map(sub => sub.value.trim())]})
+        //     .then(res => {
+        //     let msg = res.data
+        //     setDialogBox(prev => ({msg, confirm: confirmAddCategory, close: null, show: true}))
+        //     })
+        // } catch(error) {
+        //     axiosError({error, setDialogBox, resetDialogBox})
+        // }
     }
 
     useEffect(() => {

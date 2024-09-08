@@ -254,3 +254,53 @@ app.post('/subcategory', jsonParser, async (req, res) => {
     }
   }
 })
+
+app.post('/expenses', jsonParser, async (req, res) => {
+  console.log(req.body)
+  let expenses = req.body.rows
+  let globalFields = req.body.globalFields
+  let error
+  let sql = 'INSERT INTO expenses SET ?'
+  let con
+
+  try{
+    con = await pool.getConnection()
+
+    await con.beginTransaction()
+
+    //Start submitting transaction data
+    let sqlTransaction = 'INSERT INTO transactions SET ?'
+
+    let result = await con.query(sqlTransaction, globalFields)
+    // console.log(result[0])
+    let transId = result[0].insertId
+
+    expenses = expenses.map(expense => {
+      return {...expense, Transaction: transId}
+    })
+    //Start adding expense
+    for(const expense of expenses){
+      try{
+        await con.query(sql, expense)
+      } catch(err){
+        error = err
+        // console.log(err)
+        throw new Error(err)
+      }
+    }
+    con.commit()
+    res.status(200).send('Expenses added successfully.')
+  } catch(err){
+    if(con){
+      con.rollback()
+    }
+    console.log(err)
+    // throw new Error('Failed to add expenses.')
+    let error = err
+    res.status(409).send(error.message)
+  } finally{
+    if(con){
+      con.release()
+    }
+  }
+})
