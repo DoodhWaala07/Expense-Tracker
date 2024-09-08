@@ -16,7 +16,20 @@ export default function ExpenseRow({index}) {
     const {setRows} = useContext(RowsContext)
 
     useEffect(() => {
-        setRows[index] = expenseFields
+        setRows(prev => {
+            // prev[index] = Object.entries(expenseFields).reduce((acc, [key, field]) => {
+            //     console.log()
+            //     acc[key] = field.value
+            //     return acc
+            // })
+            let newObj = {}
+            Object.entries(expenseFields).forEach(([key, field]) => {
+                newObj[key] = field.value
+            })
+            console.log(newObj)
+            prev[index] = newObj
+            return [...prev]
+        })
     }, [expenseFields])
 
     useEffect(() => {
