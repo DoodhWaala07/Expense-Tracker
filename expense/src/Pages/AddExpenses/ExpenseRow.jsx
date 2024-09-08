@@ -1,16 +1,26 @@
 import MyForm from '../../Global/Form/MyForm'
 import InputField from '../../Global/InputField'
 import './expenseRow.css'
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState, useContext, forwardRef, useImperativeHandle } from 'react'
 import { RowsContext } from './AddExpenses'
 
-export default function ExpenseRow({index}) {
+const ExpenseRow = forwardRef( ({index}, ref) => {
     const [expenseFields, setExpenseFields] = useState({
         'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, api: '/category'},
         'Sub-Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, disabled: true, api: '/subcategory'},
         'Quantity': {value: '', placeholder: '', type: 'number', ref: {}, req: true},
         'Amount': {value: '', placeholder: '', type: 'number', ref: {}, req: true},
         'Note': {value: '', placeholder: '', type: 'text', ref: {}, req: true, className: 'expenseNote'},
+    })
+
+    useImperativeHandle(ref, () => {
+        return {
+            expenseFields: () => {
+                return expenseFields
+            },
+
+            setExpenseFields: setExpenseFields
+        }
     })
 
     const {setRows} = useContext(RowsContext)
@@ -62,4 +72,6 @@ export default function ExpenseRow({index}) {
             </MyForm>
         </div>
     )
-}
+})
+
+export default ExpenseRow
