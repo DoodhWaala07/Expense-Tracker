@@ -3,12 +3,30 @@ import { FormContext } from "./Form/MyForm"
 import Error from "./Error"
 import CoreField from "./CoreField"
 
-export default function TextField({label, placeholder, id}){
+export default function TextField({label, placeholder, id, type}){
     const {fields, setFields} = useContext(FormContext)
+    function isNumber(input) {
+        return !isNaN(parseFloat(input));
+      }
+      function keepOnlyNumbers(str) {
+        return str.replace(/[^\.0-9\s]/g, '');
+      }
     function onChange(e){
-        setFields(prev => {
-            return {...prev, [id]: {...prev[id], value: e.target.value}}
-        })
+        // if((type === 'number' && isNumber(e.target.value)) || e.target.value === '' ){
+        //     setFields(prev => {
+        //         return {...prev, [id]: {...prev[id], value: Number(e.target.value)}}
+        //     })
+        // }
+        if(type === 'number'){
+            setFields(prev => {
+                return {...prev, [id]: {...prev[id], value: keepOnlyNumbers(e.target.value)}}
+            })
+        }
+        if(type === 'text'){
+            setFields(prev => {
+                return {...prev, [id]: {...prev[id], value: e.target.value}}
+            })
+        }
     }
     function onClick(){
         setFields(prev => {

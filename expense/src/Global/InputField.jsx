@@ -3,11 +3,14 @@ import TextField from "./TextField";
 import SearchField from "./SearchField";
 import Error from "./Error";
    
-export default function InputField({label, placeholder, id, type, error, search}){
+export default function InputField({label, placeholder, id, type, error, search, className}){
     let ComponentToRender;
   
     switch (type) {
       case 'text':
+        ComponentToRender = TextField;
+        break;
+      case 'number':
         ComponentToRender = TextField;
         break;
       case 'select':
@@ -20,8 +23,8 @@ export default function InputField({label, placeholder, id, type, error, search}
         ComponentToRender = TextField;
     }
     return(
-        <div className='inputFieldWrapper'>
-          <ComponentToRender label={label} placeholder={placeholder} id={id} search={search}/>
+        <div className= {`inputFieldWrapper ${className}`}>
+          <ComponentToRender label={label} placeholder={placeholder} id={id} search={search} type={type}/>
           <Error msg={error}/>
         </div>
     )

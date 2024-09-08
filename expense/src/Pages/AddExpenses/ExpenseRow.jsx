@@ -10,7 +10,7 @@ export default function ExpenseRow({index}) {
         'Sub-Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, disabled: true, api: '/subcategory'},
         'Quantity': {value: '', placeholder: '', type: 'number', ref: {}, req: true},
         'Amount': {value: '', placeholder: '', type: 'number', ref: {}, req: true},
-        'Note': {value: '', placeholder: '', type: 'text', ref: {}, req: true},
+        'Note': {value: '', placeholder: '', type: 'text', ref: {}, req: true, className: 'expenseNote'},
     })
 
     const {setRows} = useContext(RowsContext)
@@ -56,7 +56,7 @@ export default function ExpenseRow({index}) {
         <div className='expRowWrapper'>
             <MyForm fields={expenseFields} setFields={setExpenseFields}>
                 {Object.entries(expenseFields).map(([key, field], i) => (
-                    <InputField key = {i} id = {key} label = {field.label || key} placeholder = {field.label || field.placeholder || key} type = {field.type} ref = {field.ref} error={field.error}/>
+                    <InputField key = {i} id = {key} label = {field.label || key} placeholder = {field.label || field.placeholder || key} type = {field.type} ref = {field.ref} error={field.error} className={field.className}/>
                 ))}
             </MyForm>
         </div>

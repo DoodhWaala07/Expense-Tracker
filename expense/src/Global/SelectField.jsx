@@ -36,21 +36,21 @@ export default function SelectField({label, placeholder, type, id, api, list}){
         }
     }, [results])
 
-    useEffect(() => {
-        const handleTouchStart = (e) => {
-            // Check if the element is meant to receive focus
-            if (e.target.classList.contains('focusable')) {
-                // Explicitly set focus to the element
-                e.target.focus();
-            }
-        };
+    // useEffect(() => {
+    //     const handleTouchStart = (e) => {
+    //         // Check if the element is meant to receive focus
+    //         if (e.target.classList.contains('focusable')) {
+    //             // Explicitly set focus to the element
+    //             e.target.focus();
+    //         }
+    //     };
     
-        document.addEventListener('touchstart', handleTouchStart);
+    //     document.addEventListener('touchstart', handleTouchStart);
     
-        return () => {
-            document.removeEventListener('touchstart', handleTouchStart);
-        };
-    }, []);
+    //     return () => {
+    //         document.removeEventListener('touchstart', handleTouchStart);
+    //     };
+    // }, []);
 
     useEffect(() => {
         setValue(prev => {
