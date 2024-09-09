@@ -8,7 +8,7 @@ export function validateEmptyFields(fields, setFields) {
     setFields(prev => {
         Object.entries(errors).forEach(([key, error]) => {
             prev[key].error = error
-            prev[key].ref.current.style.border = '1px solid red'
+            // prev[key].ref.current.style.borderColor = 'blue'
         })
         return {...prev}
     })

@@ -6,7 +6,7 @@ export default function CoreField({label, placeholder, id, type, error, onClick,
     const {fields, setFields} = useContext(FormContext)
     return (
         <input className= {`inputField`} placeholder={placeholder.replaceAll('_', ' ')} 
-        style={{cursor: 'pointer', border: fields[id].error ? '1px solid red' : ''}} 
+        style={{cursor: 'pointer', borderColor: fields[id].error ? 'red' : ''}} 
         onClick={(e) => onClick(e)} onFocus={onFocus}  onBlur={onBlur} onChange={onChange}
         value={value}
         ref={fields[id].ref}

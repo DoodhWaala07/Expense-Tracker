@@ -7,6 +7,7 @@ import { useState, createContext, useEffect, useContext, useRef } from 'react'
 import MyForm from '../../Global/Form/MyForm'
 import InputField from '../../Global/InputField'
 import formatData from '../../Global/Functions/formatData'
+import { validateEmptyFields } from '../../Global/Functions/validation'
 
 export const RowsContext = createContext()
 
@@ -34,25 +35,38 @@ export default function AddExpenses() {
     }
 
     function addExpenses(){
-        // console.log(rows)
-        // axios.post('/expenses', {rows: rows, globalFields: formatData(globalFields)})
-        // .then(res => {
-        //     let msg = 'Expenses added successfully.'
-        //     setRows([])
-        //     setDialogBox(prev => ({msg, confirm: confirm, close: null, show: true}))
-        // })
-        // .catch(error => {
-        //     console.log(error)
-        //     axiosError({error, setDialogBox, resetDialogBox})
-        // })
-        // axiosLoading({setDialogBox})
-        // console.log(rowRefs[0].current.expsenseFields)
-        rowRefs.current[0].setExpenseFields(prev => {
-            return {
-                ...prev,
-                ['Category']: {value: 'The', placeholder: 'CATEGORY', type: 'text', ref: {}, req: true, error: 'This is an error.'},
+        let rows = rowRefs.current
+        let errors = []
+        rows.forEach((row, index) => {
+            let errorsObj = validateEmptyFields(row.expenseFields(), row.setExpenseFields)
+            if(Object.values(errorsObj).length > 0){
+                errors.push(errorsObj)
             }
         })
+
+        if(errors.length){
+            return null
+        }
+
+        console.log(rows)
+        axios.post('/expenses', {rows: rows, globalFields: formatData(globalFields)})
+        .then(res => {
+            let msg = 'Expenses added successfully.'
+            setRows([])
+            setDialogBox(prev => ({msg, confirm: confirm, close: null, show: true}))
+        })
+        .catch(error => {
+            console.log(error)
+            axiosError({error, setDialogBox, resetDialogBox})
+        })
+        axiosLoading({setDialogBox})
+        
+        // rowRefs.current[0].setExpenseFields(prev => {
+        //     return {
+        //         ...prev,
+        //         ['Category']: {value: 'The', placeholder: 'CATEGORY', type: 'text', ref: {}, req: true, error: 'This is an error.'},
+        //     }
+        // })
     }
 
     return (

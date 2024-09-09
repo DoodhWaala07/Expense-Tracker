@@ -18,7 +18,6 @@ const ExpenseRow = forwardRef( ({index}, ref) => {
             expenseFields: () => {
                 return expenseFields
             },
-
             setExpenseFields: setExpenseFields
         }
     })
