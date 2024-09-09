@@ -10,7 +10,7 @@ const ExpenseRow = forwardRef( ({index}, ref) => {
         'Sub-Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, disabled: true, api: '/subcategory'},
         'Quantity': {value: '', placeholder: '', type: 'number', ref: {}, req: true},
         'Amount': {value: '', placeholder: '', type: 'number', ref: {}, req: true},
-        'Note': {value: '', placeholder: '', type: 'text', ref: {}, req: true, className: 'expenseNote'},
+        'Note': {value: '', placeholder: '', type: 'text', ref: {}, className: 'expenseNote'},
     })
 
     useImperativeHandle(ref, () => {
