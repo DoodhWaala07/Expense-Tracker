@@ -19,15 +19,25 @@ const serverless = require('serverless-http');
 
 // import { fillUpdateForm } from './functions.js';
 
-var hostname = "ia0.h.filess.io";
+// var hostname = "ia0.h.filess.io";
 
-var database = "Expenses_pinkpuredo";
+// var database = "Expenses_pinkpuredo";
 
-var port = "3307";
+// var port = "3307";
 
-var username = "Expenses_pinkpuredo";
+// var username = "Expenses_pinkpuredo";
 
-var password = "81065691c785a163250f42f5d8c695981295004b";
+// var password = "81065691c785a163250f42f5d8c695981295004b";
+
+var hostname = 'test-mysql-test07.a.aivencloud.com';
+
+var database = 'expense';
+
+var port = '13552';
+
+var username = 'avnadmin';
+
+var password = 'AVNS_JCwKfM806pmWv5gTcnO';
 
 // var db = mysql1.createConnection({
 
