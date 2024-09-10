@@ -8,7 +8,7 @@ import EditCategory from './Pages/EditCategory/EditCategory';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <AddCategory/>
+    element: <AddExpenses/>
   },
   {
     path: '/addCategory',
