@@ -14,6 +14,7 @@ const { connect } = require('http2');
 const e = require('express');
 const cors = require('cors')
 const {Server} = require('socket.io');
+const serverless = require('serverless-http');
 // const { socket } = require('./client/src/socket');
 
 // import { fillUpdateForm } from './functions.js';
@@ -28,19 +29,19 @@ var username = "Expenses_pinkpuredo";
 
 var password = "81065691c785a163250f42f5d8c695981295004b";
 
-var db = mysql1.createConnection({
+// var db = mysql1.createConnection({
 
-  host: hostname,
+//   host: hostname,
 
-  user: username,
+//   user: username,
 
-  password,
+//   password,
 
-  database,
+//   database,
 
-  port,
+//   port,
 
-});
+// });
 
 const pool = mysql.createPool({
   host: hostname,
@@ -78,10 +79,10 @@ async function connectDB() {
 
 
 
-db.connect((err)=>{
-  if (err) throw err;
-  console.log('Database connected.');
-});
+// db.connect((err)=>{
+//   if (err) throw err;
+//   console.log('Database connected.');
+// });
 
 dotenv.config()
 
@@ -97,7 +98,9 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
-app.use(express.static(path.join(__dirname, 'shipping', 'build')))
+app.use(express.static(path.join(__dirname, '..', 'expense', 'build')))
+
+console.log(path.join(__dirname, '..', 'expense', 'build'))
 app.use(express.static(__dirname));
 // app.use(express.static(path.join(__dirname, 'Checkout')));
 app.use(cookieParser())
@@ -123,6 +126,8 @@ io.of('/orders').on('connection', (socket)=>{
 io.on('disconnect', (socket) => {
   console.log('User Disconnected.')
 })
+
+module.exports.handler = serverless(app);
 
 app.post('/category', jsonParser, async (req, res) => {
   let con
@@ -328,4 +333,8 @@ app.post('/expenses', jsonParser, async (req, res) => {
       con.release()
     }
   }
+})
+
+app.get('*', (req,res) => {
+  res.sendFile(path.join(__dirname,'../expense/build/index.html'));
 })

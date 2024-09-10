@@ -119,6 +119,7 @@ export default function AddCategory() {
 
     return (
         <div className = 'addCatMain'>
+            <h1>Add Category</h1>
             <MyForm fields = {categoryFields} setFields={setCategoryFields}>
                {Object.entries(categoryFields).map(([key, field], i) => (
                 <InputField key = {i} id = {key} label = {field.label || key} placeholder = {field.label || field.placeholder || key} type = {field.type} ref = {field.ref} error={field.error}/>
