@@ -345,6 +345,15 @@ app.post('/expenses', jsonParser, async (req, res) => {
   }
 })
 
-app.get('*', (req,res) => {
-  res.sendFile(path.join(__dirname,'../expense/build/index.html'));
-})
+
+// app.get('*', (req,res) => {
+//   res.sendFile(path.join(__dirname,'../expense/build/index.html'));
+// })
+
+// app.get('/route', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../expense/build/index.html'));
+// });
+
+// app.get('*', (req, res) => {
+//   res.redirect('/route');
+// });

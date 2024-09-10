@@ -1,5 +1,6 @@
 [build]
   functions = "api"
+  publish = "expense/build"
 
 [[redirects]]
   from = "/*"
