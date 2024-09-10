@@ -1,7 +1,8 @@
 export function validateEmptyFields(fields, setFields) {
     let errors = {}
     Object.entries(fields).forEach(([key, field]) => {
-        if (field.value.trim() === "" && field.req) {
+        let value = field.value.Name || field.value
+        if (value.trim() === "" && field.req) {
             errors[key] = `${field.label || key} cannot be empty`
         } else {
             if(field.type === 'number' && field.value !== '' && isNaN(Number(field.value))) {

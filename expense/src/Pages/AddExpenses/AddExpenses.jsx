@@ -12,7 +12,7 @@ import { validateEmptyFields } from '../../Global/Functions/validation'
 export const RowsContext = createContext()
 
 export default function AddExpenses() {
-    const [rows, setRows] = useState([''])
+    const [rows, setRows] = useState(['row'])
     // const [errors, setErrors] = useState({})
     const {setDialogBox, resetDialogBox} = useContext(DialogBoxContext)
     const rowRefs = useRef([])
@@ -22,7 +22,7 @@ export default function AddExpenses() {
     })
 
     function addRow() {
-        setRows(prev => [...prev, {}])
+        setRows(prev => [...prev, 'row'])
     }
 
     function confirm(){
@@ -37,19 +37,20 @@ export default function AddExpenses() {
     function addExpenses(){
         let rows = rowRefs.current
         let errors = []
-        rows.forEach((row, index) => {
-            let errorsObj = validateEmptyFields(row.expenseFields(), row.setExpenseFields)
+        let rowsData = rows.map((row, index) => {
+            let errorsObj = validateEmptyFields(row.expenseFields, row.setExpenseFields)
             if(Object.values(errorsObj).length > 0){
                 errors.push(errorsObj)
             }
+            return formatData(row.expenseFields)
         })
 
         if(errors.length){
             return null
         }
 
-        console.log(rows)
-        axios.post('/expenses', {rows: rows, globalFields: formatData(globalFields)})
+        // console.log(rowsData)
+        axios.post('/expenses', {rows: rowsData, globalFields: formatData(globalFields)})
         .then(res => {
             let msg = 'Expenses added successfully.'
             setRows([])

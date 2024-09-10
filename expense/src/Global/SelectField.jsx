@@ -185,7 +185,7 @@ function SearchResults({results, label, id}){
             console.log('Pagination')
             page.current = page.current + 1
             console.log(page.current)
-            search({input: value, setState: setResults, api: fields[id].api, list: fields[id].list, page: page.current, pagination: true})
+            search({input: value, setState: setResults, api: fields[id].api, list: fields[id].list, page: page.current, pagination: true, metadata: fields[id].metadata})
         }
     }
 

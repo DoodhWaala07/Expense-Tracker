@@ -11,7 +11,7 @@ const router = createBrowserRouter([
     element: <AddCategory/>
   },
   {
-    path: '/addExpense',
+    path: '/addExpenses',
     element: <AddExpenses/>
   },
   {

@@ -18,21 +18,54 @@ const {Server} = require('socket.io');
 
 // import { fillUpdateForm } from './functions.js';
 
-const db = mysql1.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'Maheen123',
-  database: 'expenses'
+var hostname = "ia0.h.filess.io";
+
+var database = "Expenses_pinkpuredo";
+
+var port = "3307";
+
+var username = "Expenses_pinkpuredo";
+
+var password = "81065691c785a163250f42f5d8c695981295004b";
+
+var db = mysql1.createConnection({
+
+  host: hostname,
+
+  user: username,
+
+  password,
+
+  database,
+
+  port,
+
 });
 
 const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: 'Maheen123',
-  database: 'expenses',
-  connectionLimit: 10,
-  connectTimeout: 10000,
+  host: hostname,
+  user: username,
+  password,
+  database,
+  port,
 });
+
+
+// const db = mysql1.createConnection({
+//   host: 'localhost',
+//   user: 'root',
+//   password: 'Maheen123',
+//   database: 'expenses'
+// });
+
+// const pool = mysql.createPool({
+//   host: 'localhost',
+//   user: 'root',
+//   password: 'Maheen123',
+//   database: 'expenses',
+//   connectionLimit: 10,
+//   connectTimeout: 10000,
+// });
 
 async function connectDB() {
   try{
@@ -43,29 +76,6 @@ async function connectDB() {
   }
 }
 
-var hostname = "kw6.h.filess.io";
-
-var database = "Shipping_poormiceno";
-
-var port = "3307";
-
-var username = "Shipping_poormiceno";
-
-var password = "a0146b208178e380e170521e5d4729d9d6c5f49d";
-
-// var db = mysql.createConnection({
-
-//   host: hostname,
-
-//   user: username,
-
-//   password,
-
-//   database,
-
-//   port,
-
-// });
 
 
 db.connect((err)=>{
@@ -177,7 +187,7 @@ app.get('/category', jsonParser, async (req, res) => {
   sqlParams = [...sqlParams, limit, offset]
 
   let con
-  console.log(page)
+  // console.log(page)
   try{
     con = await pool.getConnection()
     let sql = 'SELECT * FROM category ' + whereClause + ' LIMIT ? OFFSET ? '
@@ -185,7 +195,7 @@ app.get('/category', jsonParser, async (req, res) => {
     // let sql = 'SELECT * FROM category ' + whereClause
 
     let result = await con.query(sql, sqlParams)
-    console.log(result[0])
+    // console.log(result[0])
     res.send(result[0])
   } catch(err){
     console.log(err)
@@ -200,7 +210,7 @@ app.get('/subcategory', jsonParser, async (req, res) => {
   console.log('GET SUBCATEGORY')
   let {input, type, page, limit, metadata} = req.query
   console.log(metadata)
-  let catId = metadata.ID
+  let catId = metadata.ID || ''
   input ? whereClause = 'AND Name LIKE ? ' : whereClause = ''
   limit = limit || 10
   let offset = (parseInt(page) - 1) * 10
@@ -214,7 +224,7 @@ app.get('/subcategory', jsonParser, async (req, res) => {
   try{
     con = await pool.getConnection()
     let result = await con.query(sql, sqlParams)
-    console.log(result[0])
+    // console.log(result[0])
     res.send(result[0])
   } catch(err){
     console.log(err)
@@ -228,6 +238,7 @@ app.get('/subcategory', jsonParser, async (req, res) => {
 app.post('/subcategory', jsonParser, async (req, res) => {
   let {category, subcategory} = req.body
   let catId = category.ID
+  let duplicateSub
 
   let sql = 'INSERT INTO sub_category (Name, Category) VALUES (?, ?)'
 
@@ -236,18 +247,32 @@ app.post('/subcategory', jsonParser, async (req, res) => {
   try{
     con = await pool.getConnection()
     for(const sub of subcategory){
-      await con.query(sql, [sub, catId])
+      try{
+        await con.query(sql, [sub, catId])
+      }
+      catch(err){
+        console.log(err)
+        if(err.code === 'ER_DUP_ENTRY'){
+          // res.status(409).send('Sub-Category ' + sub + ' already exists.')
+          duplicateSub = sub
+        }
+          throw err
+      }
     }
     // await con.query(sql, [subcategory, catId])
     res.status(200).send('Sub-Category created successfully.')
+
+    await con.commit()
   } catch(err){
     if(con){
       con.rollback()
     }
+    // console.log(err)
     if(err.code === 'ER_DUP_ENTRY'){
-      res.status(409).send('Sub-Category already exists.')
+        res.status(409).send('Sub-Category ' + duplicateSub + ' already exists.')
+    } else {
+      res.status(409).send('Failed to create sub-category.')
     }
-    throw new Error('Failed to create sub-category.')
   } finally{
     if(con){
       con.release()

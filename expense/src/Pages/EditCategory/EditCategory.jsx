@@ -38,15 +38,16 @@ export default function EditCategory() {
 
     function addSubCategory(e){
         e.preventDefault()
-        try{
+        
             axios.post('/subcategory', {
                 subcategory: [categoryFields['Sub-Category'].value.trim(), ...Object.values(subCategories).map(subcategory => subcategory.value)],
                 category: categoryFields['Category'].value
             }).then(res => {
                 let msg = res.data
+                setSubCategories({})
                 setDialogBox(prev => ({msg, confirm: confirmAddSubCategory, close: null, show: true}))
             })
-        } catch(error){
+        .catch(error => {
             let msg
             if (error.response) {
                 // The server responded with a status other than 200 range
@@ -63,8 +64,9 @@ export default function EditCategory() {
                 msg = error.message
             }
             setDialogBox(prev => ({msg, confirm: resetDialogBox, close: null, show: true}))
-        }
+        })
     }
+    
 
     return (
         <div className='editCategory-main'>
