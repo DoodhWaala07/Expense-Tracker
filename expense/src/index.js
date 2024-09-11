@@ -4,13 +4,19 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { GlobalDialogBox } from './Global/DialogBox';
+import SidePane from './Global/SidePane/SidePane';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     // <React.StrictMode>
+  <>
   <GlobalDialogBox>
-  <App />
-</GlobalDialogBox>
+    <SidePane>
+      <App />
+    </SidePane>
+  </GlobalDialogBox>
+  </>
+  
 // </React.StrictMode>
 );
 

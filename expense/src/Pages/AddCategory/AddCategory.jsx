@@ -10,6 +10,7 @@ import formatData, { removeSpaces } from '../../Global/Functions/formatData'
 import { DialogBoxContext } from '../../Global/DialogBox'
 import { validateEmptyFields } from '../../Global/Functions/validation'
 import axiosError, { axiosLoading } from '../../Global/Functions/axiosError'
+import SidePane from '../../Global/SidePane/SidePane'
 
 const FormContext = createContext()
 
@@ -118,6 +119,8 @@ export default function AddCategory() {
     }, [categoryFields])
 
     return (
+        <>
+        <SidePane/>
         <div className = 'addCatMain'>
             <h1>Add Category</h1>
             <MyForm fields = {categoryFields} setFields={setCategoryFields}>
@@ -131,6 +134,7 @@ export default function AddCategory() {
             <SubCategories subCategories = {subCategories} setSubCategories = {setSubCategories}/>
             <button className='btn addCategoryBtn' onClick={(e) => submitCategory(e)}>Add Category</button>
         </div>
+        </>
     )
 }
 
