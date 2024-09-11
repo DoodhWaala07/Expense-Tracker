@@ -4,6 +4,7 @@ import {BrowserRouter, createBrowserRouter, RouterProvider} from 'react-router-d
 import AddCategory from './Pages/AddCategory/AddCategory';
 import AddExpenses from './Pages/AddExpenses/AddExpenses';
 import EditCategory from './Pages/EditCategory/EditCategory';
+import Authentication from './Pages/Authentication/Authentication';
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
   {
     path: '/editCategory',
     element: <EditCategory/>
+  },
+  {
+    path: '/authentication',
+    element: <Authentication/>
   }
 ])
 

@@ -1,0 +1,40 @@
+.auth-main{
+    width: 250px;
+    /* color: blue; */
+    /* background-color: blue; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    /* border: 1px solid; */
+    gap: 5px;
+}
+
+.authBtn{
+    margin-top: 0px;
+    width: 70%;
+}
+
+
+.msg-p{
+    color: rgb(0, 123, 255);
+    cursor: pointer;
+    /* align-self: flex-start; */
+    margin-top: 5px;
+    /* margin-left: 10px; */
+    font-size: small;
+}
+
+.msg-p:hover{
+    color: rgba(0, 123, 255, 0.726);
+    cursor: pointer;
+}
+
+.msp-p:active{
+    color: rgb(0, 123, 255);
+    cursor: pointer;
+}

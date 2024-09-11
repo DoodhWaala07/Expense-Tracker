@@ -22,7 +22,7 @@ export default function TextField({label, placeholder, id, type}){
                 return {...prev, [id]: {...prev[id], value: keepOnlyNumbers(e.target.value)}}
             })
         }
-        if(type === 'text'){
+        if(type === 'text' || type === 'password'){
             setFields(prev => {
                 return {...prev, [id]: {...prev[id], value: e.target.value}}
             })
