@@ -72,7 +72,7 @@ export default function AddCategory() {
             return null
         }
         axiosLoading({setDialogBox})
-        axios.post('/category', {category: categoryFields['Category'].value.trim(), subCategories: [categoryFields['Sub-Category'].value.trim(), ...Object.values(subCategories).map(sub => sub.value.trim())]})
+        axios.post('/api/category', {category: categoryFields['Category'].value.trim(), subCategories: [categoryFields['Sub-Category'].value.trim(), ...Object.values(subCategories).map(sub => sub.value.trim())]})
         .then(res => {
             let msg = res.data
             setDialogBox(prev => ({msg, confirm: confirmAddCategory, close: null, show: true}))

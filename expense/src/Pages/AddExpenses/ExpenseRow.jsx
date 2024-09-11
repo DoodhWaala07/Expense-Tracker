@@ -6,8 +6,8 @@ import { RowsContext } from './AddExpenses'
 
 const ExpenseRow = forwardRef( ({index}, ref) => {
     const [expenseFields, setExpenseFields] = useState({
-        'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, api: '/category'},
-        'Sub_Category': {value: '', placeholder: 'Sub-Category', type: 'select', ref: {}, req: true, disabled: true, api: '/subcategory'},
+        'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, api: '/api/category'},
+        'Sub_Category': {value: '', placeholder: 'Sub-Category', type: 'select', ref: {}, req: true, disabled: true, api: '/api/subcategory'},
         'Quantity': {value: '', placeholder: '', type: 'number', ref: {}, req: true},
         'Amount': {value: '', placeholder: '', type: 'number', ref: {}, req: true},
         'Note': {value: '', placeholder: '', type: 'text', ref: {}, className: 'expenseNote'},

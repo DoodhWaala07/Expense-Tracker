@@ -50,7 +50,7 @@ export default function AddExpenses() {
         }
 
         // console.log(rowsData)
-        axios.post('/expenses', {rows: rowsData, globalFields: formatData(globalFields)})
+        axios.post('/api/expenses', {rows: rowsData, globalFields: formatData(globalFields)})
         .then(res => {
             let msg = 'Expenses added successfully.'
             setRows([])

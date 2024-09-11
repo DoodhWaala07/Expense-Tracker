@@ -17,7 +17,7 @@ export default function EditCategory() {
     const defaultCategoryFields = {
         // 'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, error: '', search: ({input, setState}) => search({api: '/category', input, setState})},
         // 'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, error: '', search: ({input, setState}) => search({api: '/category', input, setState})},
-        'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, error: '', api: '/category'},
+        'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, error: '', api: '/api/category'},
         'Sub-Category': {value: '', placeholder: '', label: 'Sub-Category', type: 'text', ref: {}, req: true},
     }
     const [categoryFields, setCategoryFields] = useState(defaultCategoryFields)
@@ -39,7 +39,7 @@ export default function EditCategory() {
     function addSubCategory(e){
         e.preventDefault()
         
-            axios.post('/subcategory', {
+            axios.post('/api/subcategory', {
                 subcategory: [categoryFields['Sub-Category'].value.trim(), ...Object.values(subCategories).map(subcategory => subcategory.value)],
                 category: categoryFields['Category'].value
             }).then(res => {

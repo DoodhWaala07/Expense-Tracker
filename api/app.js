@@ -139,7 +139,7 @@ io.on('disconnect', (socket) => {
 
 module.exports.handler = serverless(app);
 
-app.post('/category', jsonParser, async (req, res) => {
+app.post('/api/category', jsonParser, async (req, res) => {
   let con
   let {category, subCategories} = req.body
   console.log(category, subCategories)
@@ -189,7 +189,7 @@ app.post('/category', jsonParser, async (req, res) => {
   // console.log(req.body)
 })
 
-app.get('/category', jsonParser, async (req, res) => {
+app.get('/api/category', jsonParser, async (req, res) => {
   console.log('GET CATEGORY')
   let {input, type, page, limit} = req.query
   input ? whereClause = 'WHERE Name LIKE ?' : whereClause = ''
@@ -221,7 +221,7 @@ app.get('/category', jsonParser, async (req, res) => {
   }
 })
 
-app.get('/subcategory', jsonParser, async (req, res) => {
+app.get('/api/subcategory', jsonParser, async (req, res) => {
   console.log('GET SUBCATEGORY')
   let {input, type, page, limit, metadata} = req.query
   console.log(metadata)
@@ -250,7 +250,7 @@ app.get('/subcategory', jsonParser, async (req, res) => {
   }
 })
 
-app.post('/subcategory', jsonParser, async (req, res) => {
+app.post('/api/subcategory', jsonParser, async (req, res) => {
   let {category, subcategory} = req.body
   let catId = category.ID
   let duplicateSub
@@ -295,7 +295,7 @@ app.post('/subcategory', jsonParser, async (req, res) => {
   }
 })
 
-app.post('/expenses', jsonParser, async (req, res) => {
+app.post('/api/expenses', jsonParser, async (req, res) => {
   console.log(req.body)
   let expenses = req.body.rows
   let globalFields = req.body.globalFields
@@ -346,8 +346,9 @@ app.post('/expenses', jsonParser, async (req, res) => {
 })
 
 
-// app.get('*', (req,res) => {
-//   res.sendFile(path.join(__dirname,'../expense/build/index.html'));
+// app.get('/api/*', (req,res) => {
+//   // res.sendFile(path.join(__dirname,'../expense/build/index.html'));
+//   res.redirect('/editCategory');
 // })
 
 // app.get('/route', (req, res) => {
