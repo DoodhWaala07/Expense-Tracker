@@ -7,9 +7,9 @@ import { validateEmptyFields } from '../../Global/Functions/validation'
 import axios from 'axios'
 import formatData from '../../Global/Functions/formatData'
 import { DialogBoxContext } from '../../Global/DialogBox'
+import { AuthenticationContext } from './Authentication'
 
-
-export default function SignIn({setAuthType}) {
+export default function SignIn() {
     const defaultSignInFields = {
         'Username': {value: '', placeholder: '', type: 'text', ref: {}, req: true, error: ''},
         'Password': {value: '', placeholder: '', type: 'password', ref: {}, req: true},
@@ -19,6 +19,8 @@ export default function SignIn({setAuthType}) {
     const [error, setError] = useState('')
 
     const {dialogBox, setDialogBox, resetDialogBox} = useContext(DialogBoxContext)
+
+    const {setAuthType} = useContext(AuthenticationContext)
 
     function signIn(){
         if(validateEmptyFields(signInFields, setSignInFields).length > 0){
@@ -36,6 +38,12 @@ export default function SignIn({setAuthType}) {
             } else {
                 setDialogBox(prev => ({msg: 'Something went wrong. Please try again later.', spinner: false, show: true, confirm: resetDialogBox}))
             }
+        })
+    }
+
+    function goToSignUp(){
+        setAuthType(prev => {
+            return 'signup'
         })
     }
 

@@ -43,7 +43,7 @@ export default function SidePane({children}) {
 
     return (
         <>
-        <ProtectedRoute>
+        {/* <ProtectedRoute> */}
         <div className='sp-menu-icon' onClick = {menuClick} ref = {menuBtn} tabIndex={0}>
             <span class="material-symbols-outlined">
                 menu
@@ -67,7 +67,7 @@ export default function SidePane({children}) {
 
         </div>
         </CSSTransition>
-        </ProtectedRoute>
+        {/* </ProtectedRoute> */}
         {/* )} */}
         {children}
         </>

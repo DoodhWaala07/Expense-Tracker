@@ -5,7 +5,8 @@ import AddCategory from './Pages/AddCategory/AddCategory';
 import AddExpenses from './Pages/AddExpenses/AddExpenses';
 import EditCategory from './Pages/EditCategory/EditCategory';
 import Authentication from './Pages/Authentication/Authentication';
-import ProtectedRoute from './Pages/Authentication/ProtectedRoute';
+import ProtectedRoute, { InversePrtoectedRoute } from './Pages/Authentication/ProtectedRoute';
+import Test from './Pages/Test';
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,14 @@ const router = createBrowserRouter([
     path: '/editCategory',
     element: <ProtectedRoute><EditCategory/></ProtectedRoute>
   },
+  // {
+  //   path: '/authentication',
+  //   element: <Authentication/>
+  // },
+  {
+    path: 'test',
+    element: <Test/>
+  }
 ])
 
 function App() {

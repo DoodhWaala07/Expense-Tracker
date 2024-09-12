@@ -17,6 +17,7 @@ const {Server} = require('socket.io');
 const serverless = require('serverless-http');
 const authRouter = require('./routes/auth/auth')
 const pool = require('./database/pool');
+const authMiddleware = require('./routes/auth/authMiddleware');
 // const { socket } = require('./client/src/socket');
 
 // // import { fillUpdateForm } from './functions.js';
@@ -152,11 +153,12 @@ io.on('disconnect', (socket) => {
 
 module.exports.handler = serverless(app);
 
-app.post('/api/category', jsonParser, async (req, res) => {
+app.post('/api/category', authMiddleware, jsonParser, async (req, res) => {
+  let userId = req.user.id
   let con
   let {category, subCategories} = req.body
   console.log(category, subCategories)
-  let sql = 'INSERT INTO category (Name) VALUES (?)'
+  let sql = 'INSERT INTO category (Name, User) VALUES (?, ?)'
   let catId
 
   try{
@@ -164,7 +166,7 @@ app.post('/api/category', jsonParser, async (req, res) => {
     con.beginTransaction()
 
     try{
-      result = await con.query(sql, category)
+      result = await con.query(sql, [category, userId])
       catId = result[0].insertId
     } catch(err){
       if(err.code === 'ER_DUP_ENTRY'){
@@ -175,9 +177,9 @@ app.post('/api/category', jsonParser, async (req, res) => {
 
       for (const subCat of subCategories) {
         console.log(subCat)
-        sql = 'INSERT INTO sub_category (Name, Category) VALUES (?, ?)';
+        sql = 'INSERT INTO sub_category (Name, Category, User) VALUES (?, ?, ?)';
         try {
-          await con.query(sql, [subCat, catId]);
+          await con.query(sql, [subCat, catId, userId]);
         } catch (err) {
           if (err.code === 'ER_DUP_ENTRY') {
             res.status(409).send('Sub-Category ' + subCat + ' already exists.');
@@ -202,14 +204,18 @@ app.post('/api/category', jsonParser, async (req, res) => {
   // console.log(req.body)
 })
 
-app.get('/api/category', jsonParser, async (req, res) => {
+app.get('/api/category', jsonParser, authMiddleware, async (req, res) => {
+  console.log(req.user)
+  let userId = req.user.id
   console.log('GET CATEGORY')
   let {input, type, page, limit} = req.query
-  input ? whereClause = 'WHERE Name LIKE ?' : whereClause = ''
+
+  let whereClause = 'WHERE User = ?'
+  input ? whereClause += ' AND Name LIKE ?' : null
   limit = limit || 10
   let offset = (parseInt(page) - 1) * 10
 
-  let sqlParams = []
+  let sqlParams = [userId]
   input ? sqlParams.push(`%${input}%`) : null
 
   sqlParams = [...sqlParams, limit, offset]
@@ -234,19 +240,22 @@ app.get('/api/category', jsonParser, async (req, res) => {
   }
 })
 
-app.get('/api/subcategory', jsonParser, async (req, res) => {
+app.get('/api/subcategory', jsonParser, authMiddleware, async (req, res) => {
   console.log('GET SUBCATEGORY')
+  let userId = req.user.id
   let {input, type, page, limit, metadata} = req.query
   console.log(metadata)
   let catId = metadata.ID || ''
-  input ? whereClause = 'AND Name LIKE ? ' : whereClause = ''
+  // input ? whereClause = 'AND Name LIKE ? ' : whereClause = ''
+  let whereClause = ' WHERE User = ? AND Category = ? '
+  input ? whereClause += ' AND Name LIKE ?' : null
   limit = limit || 10
   let offset = (parseInt(page) - 1) * 10
-  let sqlParams = [catId]
+  let sqlParams = [userId, catId]
 
   sqlParams = input ? [...sqlParams, `%${input}%`, limit, offset] : [...sqlParams, limit, offset]
 
-  let sql = 'SELECT * FROM sub_category WHERE Category = ? ' + whereClause + 'LIMIT ? OFFSET ?'
+  let sql = 'SELECT * FROM sub_category' + whereClause + 'LIMIT ? OFFSET ?'
 
   let con
   try{
@@ -263,12 +272,13 @@ app.get('/api/subcategory', jsonParser, async (req, res) => {
   }
 })
 
-app.post('/api/subcategory', jsonParser, async (req, res) => {
+app.post('/api/subcategory', jsonParser, authMiddleware, async (req, res) => {
   let {category, subcategory} = req.body
+  let userId = req.user.id
   let catId = category.ID
   let duplicateSub
 
-  let sql = 'INSERT INTO sub_category (Name, Category) VALUES (?, ?)'
+  let sql = 'INSERT INTO sub_category (Name, Category, User) VALUES (?, ?, ?)'
 
   let con
 
@@ -276,7 +286,7 @@ app.post('/api/subcategory', jsonParser, async (req, res) => {
     con = await pool.getConnection()
     for(const sub of subcategory){
       try{
-        await con.query(sql, [sub, catId])
+        await con.query(sql, [sub, catId, userId])
       }
       catch(err){
         console.log(err)
@@ -308,10 +318,14 @@ app.post('/api/subcategory', jsonParser, async (req, res) => {
   }
 })
 
-app.post('/api/expenses', jsonParser, async (req, res) => {
+app.post('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
   console.log(req.body)
   let expenses = req.body.rows
   let globalFields = req.body.globalFields
+
+  let userId = req.user.id
+
+  globalFields.User = userId
   let error
   let sql = 'INSERT INTO expenses SET ?'
   let con

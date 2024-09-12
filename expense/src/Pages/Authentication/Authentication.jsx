@@ -12,27 +12,32 @@ import { DialogBoxContext } from '../../Global/DialogBox'
 export const AuthenticationContext = createContext()
 
 export default function Authentication() {
-    const [authType, setAuthType] = useState('login')
+    const [authType, setAuthType] = useState('signin')
 
     const [otpMetaData, setOtpMetaData] = useState({email: '', otp: '', api: ''})
+
+    useEffect(() => {
+        console.log(authType)
+    }, [authType])
     
     return(
         <>
         <AuthenticationContext.Provider value={{authType, setAuthType, otpMetaData, setOtpMetaData}}>
-            {authType === 'login' && <SignIn setAuthType={setAuthType}/>}
-            {authType === 'signup' && <SignUp setAuthType={setAuthType}/>}
+            {authType === 'signin' && <SignIn/>}
+            {authType === 'signup' && <SignUp/>}
             {authType === 'otp' && <OTP setAuthType={setAuthType} />}
         </AuthenticationContext.Provider>
         </>
-        
     )
 }
 
-function SignUp({setAuthType}) {
+function SignUp() {
 
     const {dialogBox, setDialogBox, resetDialogBox} = useContext(DialogBoxContext)
 
     const {otpMetaData, setOtpMetaData} = useContext(AuthenticationContext)
+
+    const {setAuthType} = useContext(AuthenticationContext)
 
     function validateUsername(e){
         console.log(e.target.value)
@@ -118,7 +123,7 @@ function SignUp({setAuthType}) {
             <MyForm fields={signUpFields} setFields={setSignUpFields}>
                 {Object.entries(signUpFields).map(([key, field]) => <InputField label={field.label || key} placeholder={field.placeholder || field.label || key} id={key} type={field.type} error={field.error} />)}
             </MyForm>
-            <p className='msg-p' onClick={() => setAuthType('login')}>Already have an account? Sign In.</p>
+            <p className='msg-p' onClick={() => setAuthType('signin')}>Already have an account? Sign In.</p>
             <button className='btn authBtn' onClick={signUp}>Sign Up</button>
         </div>
     )

@@ -65,6 +65,7 @@ export default function AddCategory() {
         setCategoryFields(prev => {
             return {...defaultCategoryFields}
         })
+        setSubCategories({})
         resetDialogBox()
     }
 
@@ -77,6 +78,7 @@ export default function AddCategory() {
         .then(res => {
             let msg = res.data
             setDialogBox(prev => ({msg, confirm: confirmAddCategory, close: null, show: true}))
+            
         })
         .catch(error => {
             // let msg
@@ -120,7 +122,6 @@ export default function AddCategory() {
 
     return (
         <>
-        <SidePane/>
         <div className = 'addCatMain'>
             <h1>Add Category</h1>
             <MyForm fields = {categoryFields} setFields={setCategoryFields}>
