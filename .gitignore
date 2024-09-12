@@ -2,5 +2,3 @@ node_modules
 
 # Local Netlify folder
 .netlify
-
-api/.env
