@@ -1,6 +1,9 @@
 import './sidePane.css'
-import {useEffect, useState, useRef} from 'react'
+import {useEffect, useState, useRef, useContext} from 'react'
 import {CSSTransition} from 'react-transition-group'
+import axios from 'axios'
+import {DialogBoxContext} from '../DialogBox'
+import ProtectedRoute from '../../Pages/Authentication/ProtectedRoute'
 // import {navigate} from 'react-router-dom'
 
 export default function SidePane({children}) {
@@ -40,6 +43,7 @@ export default function SidePane({children}) {
 
     return (
         <>
+        <ProtectedRoute>
         <div className='sp-menu-icon' onClick = {menuClick} ref = {menuBtn} tabIndex={0}>
             <span class="material-symbols-outlined">
                 menu
@@ -59,10 +63,11 @@ export default function SidePane({children}) {
 
             <SidePaneElement url = '/addExpenses' text = 'Add Expenses'/>
 
-            <SidePaneElement url = '/authentication' text = 'Sign Up'/>
+            <SidePaneElement url = '' text = 'Sign Out'/>
 
         </div>
         </CSSTransition>
+        </ProtectedRoute>
         {/* )} */}
         {children}
         </>
@@ -71,8 +76,24 @@ export default function SidePane({children}) {
 
 function SidePaneElement({url, text}){
 
+    const {setDialogBox, resetDialogBox} = useContext(DialogBoxContext)
+
     function onClick(){
-        window.location.href = url
+        if(!url){
+            axios.get('/api/auth/signout', {withCredentials: true})
+            .then(res => {
+                resetDialogBox()
+                window.location.href = '/'
+            })
+            .catch(err => {
+                setDialogBox(prev => ({msg: 'Something went wrong. Please try again later.', spinner: false, show: true, confirm: resetDialogBox}))
+                console.log(err)
+            })
+            setDialogBox(prev => ({msg: 'Logging Out...', spinner: true, show: true}))
+
+        } else {
+            window.location.href = url
+        }
     }
 
     return(

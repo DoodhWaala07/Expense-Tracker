@@ -1,4 +1,5 @@
 import './auth.css'
+import SignIn from './SignIn'
 import '../../Global/inputFields.css'
 import MyForm from '../../Global/Form/MyForm'
 import { useState, useEffect, createContext, useContext } from 'react'
@@ -8,7 +9,7 @@ import axios from 'axios'
 import formatData from '../../Global/Functions/formatData'
 import { DialogBoxContext } from '../../Global/DialogBox'
 
-const AuthenticationContext = createContext()
+export const AuthenticationContext = createContext()
 
 export default function Authentication() {
     const [authType, setAuthType] = useState('login')
@@ -119,32 +120,6 @@ function SignUp({setAuthType}) {
             </MyForm>
             <p className='msg-p' onClick={() => setAuthType('login')}>Already have an account? Sign In.</p>
             <button className='btn authBtn' onClick={signUp}>Sign Up</button>
-        </div>
-    )
-}
-
-function SignIn({setAuthType}) {
-    const defaultSignInFields = {
-        'Username': {value: '', placeholder: '', type: 'text', ref: {}, req: true, error: ''},
-        'Password': {value: '', placeholder: '', type: 'password', ref: {}, req: true},
-    }
-    const [signInFields, setSignInFields] = useState(defaultSignInFields)
-
-    function signIn(){
-        if(validateEmptyFields(signInFields, setSignInFields).length > 0){
-            return null
-        }
-        axios.post('/api/auth/signin', formatData(signInFields), {withCredentials: true})
-    }
-
-    return (
-        <div className="auth-main">
-            <h1>Sign In</h1>
-            <MyForm fields={signInFields} setFields={setSignInFields}>
-                {Object.entries(signInFields).map(([key, field]) => <InputField label={field.label || key} placeholder={field.placeholder || field.label || key} id={key} type={field.type} error={field.error} />)}
-            </MyForm>
-            <p className='msg-p' onClick={() => setAuthType('signup')}>New User? Sign Up.</p>
-            <button className='btn authBtn' onClick={signIn}>Sign In</button>
         </div>
     )
 }

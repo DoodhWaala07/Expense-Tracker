@@ -18,6 +18,7 @@ const serverless = require('serverless-http');
 const nodemailer = require('nodemailer');
 const pool = require('../../database/pool');
 const crypto = require('crypto');
+const authMiddleware = require('./authMiddleware');
 
 dotenv.config();
 
@@ -155,11 +156,51 @@ rtr.post('/signup', jsonParser, async (req, res) => {
 })
 
 rtr.post('/signin', jsonParser, async (req, res) => {
-    // let {username, email, password} = req.body
-    console.log('AUTH')
-    console.log(req.body)
-    // console.log(username, email, password)
+    let {Username, Password} = req.body
+    console.log('SIGN IN')
+    console.log(Username, Password)
+
+    let sql = 'SELECT * FROM Users WHERE Username = ?'
+
+    let con 
+
+    try {
+        con = await pool.getConnection()
+        let [[result]] = await con.query(sql, [Username])
+        console.log(result)
+        if(result && bcrypt.compareSync(Password, result.Password)){
+            const token = jwt.sign({id: result.ID, username: result.Username}, process.env.JWT_SECRET, {expiresIn: '1hr'})
+            res.cookie('token', token, {
+                httpOnly: true,  // Ensures the cookie is only sent in HTTP requests, not accessible via JavaScript
+                secure: process.env.NODE_ENV === 'production',  // Set secure only in production (HTTPS)
+                sameSite: 'Strict',  // Helps prevent CSRF attacks
+                maxAge: 3600000  // 1 hour in milliseconds
+            });
+    
+            res.status(200).send(result)
+        } else {
+            let error = new Error('Invalid credentials')
+            error.code = 'INVALID_CREDENTIALS'
+            throw error
+        }
+    } catch (error) {
+        console.log(error)
+        if(error.code === 'INVALID_CREDENTIALS') return res.status(401).send('Invalid credentials')
+        res.status(500).json({message: 'Server Error'})
+    } finally {
+        if(con) con.release()
+    }
   })
+
+rtr.get('/signout', (req, res) => {
+    try{
+        res.clearCookie('token')
+        res.status(200).send('Signout successful')
+    } catch(err){
+        console.log(err)
+        res.status(500).json({message: 'Server Error'})
+    }
+})
 
 rtr.get('/checkUsername', async (req, res) => {
     console.log('CHECK USERNAME')
@@ -261,6 +302,10 @@ rtr.post('/checkSignUpOTP', jsonParser, async (req, res) => {
     } finally {
         if(con) con.release()
     }
+})
+
+rtr.get('/checkToken', authMiddleware, async (req, res) => {
+    res.status(200).send('Authorized')
 })
 
 module.exports = rtr

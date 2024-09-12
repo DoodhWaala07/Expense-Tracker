@@ -5,28 +5,25 @@ import AddCategory from './Pages/AddCategory/AddCategory';
 import AddExpenses from './Pages/AddExpenses/AddExpenses';
 import EditCategory from './Pages/EditCategory/EditCategory';
 import Authentication from './Pages/Authentication/Authentication';
+import ProtectedRoute from './Pages/Authentication/ProtectedRoute';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <AddExpenses/>
+    element: <ProtectedRoute><AddExpenses/></ProtectedRoute>
   },
   {
     path: '/addCategory',
-    element: <AddCategory/>
+    element: <ProtectedRoute><AddCategory/></ProtectedRoute>
   },
   {
     path: '/addExpenses',
-    element: <AddExpenses/>
+    element: <ProtectedRoute><AddExpenses/></ProtectedRoute>
   },
   {
     path: '/editCategory',
-    element: <EditCategory/>
+    element: <ProtectedRoute><EditCategory/></ProtectedRoute>
   },
-  {
-    path: '/authentication',
-    element: <Authentication/>
-  }
 ])
 
 function App() {
