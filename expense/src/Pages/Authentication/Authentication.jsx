@@ -85,9 +85,12 @@ function SignUp({setAuthType}) {
         axios.post('/api/auth/signup', formatData(signUpFields))
         .then(res => {
             console.log(res.data)
+            setDialogBox(prev => {
+                return {...prev, show: false}
+            })
             setAuthType(prev => 'otp')
             setOtpMetaData(prev => {
-                return {...prev, email: signUpFields['Email'].value}
+                return {...prev, email: signUpFields['Email'].value, userId: res.data.userId, api: '/api/auth/checkSignUpOTP'}
             })
         })
         .catch(err => {
@@ -102,6 +105,9 @@ function SignUp({setAuthType}) {
                     return {...prev, show: true, msg: 'Something went wrong. Please try again later', type: 'error', confirm: resetDialogBox}
                 })
             }
+        })
+        setDialogBox(prev => {
+            return {...prev, show: true, spinner: true, msg: 'Please Wait...'}
         })
     }
 
@@ -157,7 +163,7 @@ function OTP({setAuthType}) {
         if(validateEmptyFields(otpFields, setOtpFields).length > 0){
             return null
         }
-        axios.post('/api/auth/checkOtp', {...formatData(otpFields), Email: otpMetaData.email})
+        axios.post(otpMetaData.api, {...formatData(otpFields), Email: otpMetaData.email, userId: otpMetaData.userId})
         .then(res => {
             window.location.href = '/'
         })
