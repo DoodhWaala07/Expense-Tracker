@@ -15,51 +15,63 @@ const e = require('express');
 const cors = require('cors')
 const {Server} = require('socket.io');
 const serverless = require('serverless-http');
+const authRouter = require('./routes/auth/auth')
+const pool = require('./database/pool');
 // const { socket } = require('./client/src/socket');
 
-// import { fillUpdateForm } from './functions.js';
+// // import { fillUpdateForm } from './functions.js';
 
-// var hostname = "ia0.h.filess.io";
+// // var hostname = "ia0.h.filess.io";
 
-// var database = "Expenses_pinkpuredo";
+// // var database = "Expenses_pinkpuredo";
 
-// var port = "3307";
+// // var port = "3307";
 
-// var username = "Expenses_pinkpuredo";
+// // var username = "Expenses_pinkpuredo";
 
-// var password = "81065691c785a163250f42f5d8c695981295004b";
+// // var password = "81065691c785a163250f42f5d8c695981295004b";
 
-var hostname = 'test-mysql-test07.a.aivencloud.com';
+// // var hostname = 'test-mysql-test07.a.aivencloud.com';
 
-var database = 'expense';
+// // var database = 'expense';
 
-var port = '13552';
+// // var port = '13552';
 
-var username = 'avnadmin';
+// // var username = 'avnadmin';
 
-var password = 'AVNS_JCwKfM806pmWv5gTcnO';
+// // var password = 'AVNS_JCwKfM806pmWv5gTcnO';
 
-// var db = mysql1.createConnection({
+// const hostname = 'localhost';
+// const username = 'root';
+// const password = 'Maheen123';
+// const database = 'expenses';
+// const port = '3306';
+// const connectionLimit = 10;
+// const connectTimeout = 10000;
 
+// // var db = mysql1.createConnection({
+
+// //   host: hostname,
+
+// //   user: username,
+
+// //   password,
+
+// //   database,
+
+// //   port,
+
+// // });
+
+// const pool = mysql.createPool({
 //   host: hostname,
-
 //   user: username,
-
 //   password,
-
 //   database,
-
 //   port,
-
+//   connectionLimit: connectionLimit,
+//   connectTimeout: connectTimeout
 // });
-
-const pool = mysql.createPool({
-  host: hostname,
-  user: username,
-  password,
-  database,
-  port,
-});
 
 
 // const db = mysql1.createConnection({
@@ -119,6 +131,7 @@ app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true
 }))
+app.use('/api/auth', authRouter)
 
 const io = new Server(app.listen(process.env.PORT, ()=>{console.log("Listening.")}), {
   cors: {
@@ -345,6 +358,12 @@ app.post('/api/expenses', jsonParser, async (req, res) => {
   }
 })
 
+// app.post('/api/auth/signin', jsonParser, async (req, res) => {
+//   // let {username, email, password} = req.body
+//   console.log('AUTH')
+//   console.log(req.body)
+//   // console.log(username, email, password)
+// })
 
 // app.get('/api/*', (req,res) => {
 //   // res.sendFile(path.join(__dirname,'../expense/build/index.html'));

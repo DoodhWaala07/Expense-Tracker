@@ -33,6 +33,13 @@ export default function TextField({label, placeholder, id, type}){
             return {...prev, [id]: {...prev[id], error: ''}}
         })
     }
+
+    function onBlur(e){
+        if(fields[id].onBlur){
+            fields[id].onBlur(e)
+        }
+    }
+
     return(
         <div className='searchFieldWrapper'>
             {/* <label className='fieldLabel'>{label.replaceAll('_', ' ')}</label><br/> */}
@@ -43,7 +50,9 @@ export default function TextField({label, placeholder, id, type}){
             style={{border: fields[id].error ? '1px solid red' : ''}}
             onClick={onClick}
             /> */}
-            <CoreField label={label} placeholder={placeholder} id={id} type={'text'} onClick={onClick} onChange={onChange} value={fields[id].value}/>
+            <CoreField label={label} placeholder={placeholder} id={id} type={'text'} 
+            onClick={onClick} onChange={onChange} onBlur={onBlur}
+            value={fields[id].value}/>
         </div>
     )
 }
