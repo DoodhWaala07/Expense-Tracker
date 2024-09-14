@@ -90,8 +90,8 @@ function SidePaneElement({url, text}){
             axios.post('/api/auth/signout', {withCredentials: true})
             .then(res => {
                 resetDialogBox()
-                setOpen(false)
                 setAuth(false)
+                setOpen(false)
                 // window.location.reload()
             })
             .catch(err => {

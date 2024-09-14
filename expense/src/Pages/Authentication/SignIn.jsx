@@ -29,7 +29,8 @@ export default function SignIn() {
         if(validateEmptyFields(signInFields, setSignInFields).length > 0){
             return null
         }
-        axios.post('/api/auth/signin', formatData(signInFields), {withCredentials: true})
+        let staySignedIn = document.getElementById('staySignedIn').checked
+        axios.post('/api/auth/signin', {...formatData(signInFields), staySignedIn: staySignedIn}, {withCredentials: true})
         .then(res => {
             resetDialogBox()
             // window.location.href = '/'
@@ -63,6 +64,11 @@ export default function SignIn() {
                 {Object.entries(signInFields).map(([key, field]) => <InputField label={field.label || key} placeholder={field.placeholder || field.label || key} id={key} type={field.type} error={field.error} />)}
             </MyForm>
             {error && <p className='field-error'>{error}</p>}
+            <label for="staySignedIn" className='staySignedInLabel' style={{fontSize: 'small'}}>
+                <input type="checkbox" id="staySignedIn" name="staySignedIn" className='staySignedIn' style={{marginRight: '5px'}}></input>
+                Stay Signed In
+            </label>
+
             <p className='msg-p' onClick={() => setAuthType('signup')}>New User? Sign Up.</p>
             <button className='btn authBtn' onClick={signIn}>Sign In</button>
         </div>

@@ -38,3 +38,7 @@
     color: rgb(0, 123, 255);
     cursor: pointer;
 }
+
+.staySignedInLabel{
+    font: large;
+}

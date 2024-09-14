@@ -99,7 +99,7 @@ rtr.post('/signup', jsonParser, async (req, res) => {
 });
 
 rtr.post('/signin', jsonParser, async (req, res) => {
-    let {Username, Password} = req.body
+    let {Username, Password, staySignedIn} = req.body
     console.log('SIGN IN')
     console.log(Username, Password)
 
@@ -120,7 +120,7 @@ rtr.post('/signin', jsonParser, async (req, res) => {
                 // domain: undefined,
                 path: '/',
                 sameSite: 'Strict',  // Helps prevent CSRF attacks
-                maxAge: 3600000  // 1 hour in milliseconds
+                maxAge: staySignedIn ? 3600000 * 24 * 365 * 10 : null // 1 hour in milliseconds
             });
     
             res.status(200).send(result)
