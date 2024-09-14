@@ -8,6 +8,8 @@ import { validateEmptyFields } from '../../Global/Functions/validation'
 import axios from 'axios'
 import formatData from '../../Global/Functions/formatData'
 import { DialogBoxContext } from '../../Global/DialogBox'
+import SignUp from './SignUp'
+import OTP from './OTP'
 
 export const AuthenticationContext = createContext()
 
@@ -25,149 +27,8 @@ export default function Authentication() {
         <AuthenticationContext.Provider value={{authType, setAuthType, otpMetaData, setOtpMetaData}}>
             {authType === 'signin' && <SignIn/>}
             {authType === 'signup' && <SignUp/>}
-            {authType === 'otp' && <OTP setAuthType={setAuthType} />}
+            {authType === 'otp' && <OTP/>}
         </AuthenticationContext.Provider>
         </>
-    )
-}
-
-function SignUp() {
-
-    const {dialogBox, setDialogBox, resetDialogBox} = useContext(DialogBoxContext)
-
-    const {otpMetaData, setOtpMetaData} = useContext(AuthenticationContext)
-
-    const {setAuthType} = useContext(AuthenticationContext)
-
-    function validateUsername(e){
-        console.log(e.target.value)
-        axios.get('/api/auth/checkUsername', {params: {'username': e.target.value}})
-        .then(res => {
-            if(res.data.length > 0){
-                setSignUpFields(prev => {
-                    return {...prev, 'Username': {...prev['Username'], error: 'Username already exists'}}
-                })
-            }
-        })
-        .catch(err => {
-            console.log(err)
-        })
-    }
-    const defaultSignUpFields = {
-        'Email': {value: '', placeholder: '', type: 'text', ref: {}, req: true, error: ''},
-        'Username': {value: '', placeholder: '', type: 'text', ref: {}, req: true, error: '', onBlur: validateUsername},
-        'Password': {value: '', placeholder: '', type: 'password', ref: {}, req: true},
-        'Confirm_Password': {value: '', placeholder: 'Confirm Password', type: 'password', ref: {}, req: true,},
-    }
-    const [signUpFields, setSignUpFields] = useState(defaultSignUpFields)
-
-    useEffect(() => {
-        let password = signUpFields['Password'].value
-        let confirmPassword = signUpFields['Confirm_Password'].value
-
-        if (password !== confirmPassword && password !== '' && confirmPassword !== '') {
-            setSignUpFields(prev => {
-                return {...prev, 'Confirm_Password': {...prev['Confirm_Password'], error: 'Passwords do not match.'}}
-            })
-        }
-
-        if (password === confirmPassword) {
-            setSignUpFields(prev => {
-                return {...prev, 'Confirm_Password': {...prev['Confirm_Password'], error: ''}}
-            })
-        }
-
-    }, [signUpFields['Password'].value, signUpFields['Confirm_Password'].value])
-
-    useEffect(() => {
-        
-    }, [signUpFields['Username'].value])
-    
-
-    function signUp(){
-        if(Object.keys(validateEmptyFields(signUpFields, setSignUpFields)).length > 0){
-            return null
-        }
-        axios.post('/api/auth/signup', formatData(signUpFields))
-        .then(res => {
-            console.log(res.data)
-            setDialogBox(prev => {
-                return {...prev, show: false}
-            })
-            setAuthType(prev => 'otp')
-            setOtpMetaData(prev => {
-                return {...prev, email: signUpFields['Email'].value, userId: res.data.userId, api: '/api/auth/checkSignUpOTP'}
-            })
-        })
-        .catch(err => {
-            console.log(err)
-            if(err.status === 409){
-                setSignUpFields(prev => {
-                    return {...prev, ['Email']: {...prev['Email'], error: 'Email is already in use.'}}
-                })
-            }
-            if(err.status === 500){
-                setDialogBox(prev => {
-                    return {...prev, show: true, msg: 'Something went wrong. Please try again later', type: 'error', confirm: resetDialogBox}
-                })
-            }
-        })
-        setDialogBox(prev => {
-            return {...prev, show: true, spinner: true, msg: 'Please Wait...'}
-        })
-    }
-
-    return (
-        <div className="auth-main">
-            <h1>Sign Up</h1>
-            <MyForm fields={signUpFields} setFields={setSignUpFields}>
-                {Object.entries(signUpFields).map(([key, field]) => <InputField label={field.label || key} placeholder={field.placeholder || field.label || key} id={key} type={field.type} error={field.error} />)}
-            </MyForm>
-            <p className='msg-p' onClick={() => setAuthType('signin')}>Already have an account? Sign In.</p>
-            <button className='btn authBtn' onClick={signUp}>Sign Up</button>
-        </div>
-    )
-}
-
-function OTP({setAuthType}) {
-    const defaultOTPFields = {
-        'OTP': {value: '', placeholder: '', type: 'number', ref: {}, req: true, error: ''},
-    }
-    const [otpFields, setOtpFields] = useState(defaultOTPFields)
-
-    const {otpMetaData} = useContext(AuthenticationContext)
-
-    const {setDialogBox, resetDialogBox} = useContext(DialogBoxContext)
-
-    function submitOTP(){
-        if(validateEmptyFields(otpFields, setOtpFields).length > 0){
-            return null
-        }
-        axios.post(otpMetaData.api, {...formatData(otpFields), Email: otpMetaData.email, userId: otpMetaData.userId})
-        .then(res => {
-            window.location.href = '/'
-        })
-        .catch(err => {
-            console.log('OTP ERROR')
-            if(err.status === 500){
-                setDialogBox(prev => {
-                    return {...prev, show: true, msg: 'Something went wrong with the OTP. Please try again later', type: 'error', confirm: resetDialogBox}
-                })
-            }
-            if(err.status === 404){
-                setOtpFields(prev => {
-                    return {...prev, ['OTP']: {...prev['OTP'], error: 'Invalid OTP'}}
-                })
-            }
-        })
-    }
-    return(
-        <div className='auth-main'>
-            <h1>OTP</h1>
-            <MyForm fields={otpFields} setFields={setOtpFields}>
-                {Object.entries(otpFields).map(([key, field]) => <InputField label={field.label || key} placeholder={field.placeholder || field.label || key} id={key} type={field.type} error={field.error} />)}
-            </MyForm>
-            <button className='btn authBtn' onClick={submitOTP}>Submit</button>
-        </div>
     )
 }

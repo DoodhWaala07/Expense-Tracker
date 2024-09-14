@@ -26,7 +26,7 @@ export default function SignIn() {
     const navigate = useNavigate()
 
     function signIn(){
-        if(validateEmptyFields(signInFields, setSignInFields).length > 0){
+        if(Object.keys(validateEmptyFields(signInFields, setSignInFields)).length > 0){
             return null
         }
         let staySignedIn = document.getElementById('staySignedIn').checked
@@ -64,8 +64,8 @@ export default function SignIn() {
                 {Object.entries(signInFields).map(([key, field]) => <InputField label={field.label || key} placeholder={field.placeholder || field.label || key} id={key} type={field.type} error={field.error} />)}
             </MyForm>
             {error && <p className='field-error'>{error}</p>}
-            <label for="staySignedIn" className='staySignedInLabel' style={{fontSize: 'small'}}>
-                <input type="checkbox" id="staySignedIn" name="staySignedIn" className='staySignedIn' style={{marginRight: '5px'}}></input>
+            <label for="staySignedIn" className='staySignedInLabel' style={{fontSize: 'small', }}>
+                <input type="checkbox" id="staySignedIn" name="staySignedIn" className='staySignedIn' ></input>
                 Stay Signed In
             </label>
 

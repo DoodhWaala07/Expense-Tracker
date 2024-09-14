@@ -55,10 +55,20 @@ rtr.post('/signup', jsonParser, async (req, res) => {
         con = await pool.getConnection()
         await con.beginTransaction()
 
-        let salt = await bcrypt.genSalt(10)
-        let hashedPassword = await bcrypt.hash(Password, salt)    
+        let sql = 'SELECT * FROM users WHERE Email = ?'
 
-        let sql = 'INSERT INTO users_temp (Username, Email, Password) VALUES (?, ?, ?)'
+        let emailCheck = await con.query(sql, [Email])
+
+        if(emailCheck[0].length > 0){
+            let error = new Error({code: 'ER_DUP_ENTRY', message: 'Email already exists.'})
+            error.code = 'ER_DUP_ENTRY'
+            throw error
+        }
+
+        let salt = await bcrypt.genSalt(10)
+        let hashedPassword = await bcrypt.hash(Password, salt)   
+
+        sql = 'INSERT INTO users_temp (Username, Email, Password) VALUES (?, ?, ?)'
 
         let result = await con.query(sql, [Username, Email, hashedPassword])
 

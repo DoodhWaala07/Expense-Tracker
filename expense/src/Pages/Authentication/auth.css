@@ -41,4 +41,6 @@
 
 .staySignedInLabel{
     font: large;
+    /* border: 1px solid */
+    margin-left: -10px;
 }

@@ -1,3 +1,7 @@
+const dotenv = require('dotenv');
+
+dotenv.config()
+
 var hostname = 'test-mysql-test07.a.aivencloud.com';
 
 var database = 'expense';
@@ -6,7 +10,7 @@ var port = '13552';
 
 var username = 'avnadmin';
 
-var password = DB_PASSWORD;
+var password = process.env.DB_PASSWORD;
 
 const mysql = require('mysql2/promise');
 

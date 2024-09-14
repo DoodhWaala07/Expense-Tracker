@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "react": "cd expense && npm start",
-    "api": "cd api && npx nodemon app.js"
+    "api": "cd api && npx nodemon app.js",
+    "build": "cd expense && npm run build",
+    "prod": "netlify deploy --prod"
   },
   "keywords": [],
   "author": "",
