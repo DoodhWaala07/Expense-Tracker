@@ -3,6 +3,7 @@ body {
   font-family: 'Manrope';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
   /* position: absolute; */
   /* top: 50%; right: 50%;
   transform: translate(50%,-50%); */

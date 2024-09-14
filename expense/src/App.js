@@ -8,6 +8,8 @@ import Authentication from './Pages/Authentication/Authentication';
 import ProtectedRoute, { InversePrtoectedRoute } from './Pages/Authentication/ProtectedRoute';
 import Test from './Pages/Test';
 import SidePane from './Global/SidePane/SidePane';
+import ViewExpenses from './Pages/Reporting/ViewExpenses';
+import FilterPane from './Pages/Reporting/FilterPane/FilterPane';
 
 const router = createBrowserRouter([
   {
@@ -29,6 +31,16 @@ const router = createBrowserRouter([
       {
         path: '/editCategory',
         element: <ProtectedRoute><EditCategory/></ProtectedRoute>
+      },
+      {
+        path: '/viewExpenses',
+        element: <FilterPane/>,
+        children: [
+          {
+            path: '/viewExpenses',
+            element: <ViewExpenses/>
+          }
+        ]
       },
       // {
       //   path: '/authentication',

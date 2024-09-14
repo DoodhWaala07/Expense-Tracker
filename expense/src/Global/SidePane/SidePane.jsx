@@ -67,6 +67,8 @@ export default function SidePane({children}) {
 
             <SidePaneElement url = '/addExpenses' text = 'Add Expenses'/>
 
+            <SidePaneElement url = '/viewExpenses' text = 'View Expenses'/>
+
             <SidePaneElement url = '' text = 'Sign Out'/>
 
         </div>
