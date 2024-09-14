@@ -41,63 +41,6 @@ const generateOTP = () => {
 };
 
 
-// rtr.post('/signup', jsonParser, async (req, res) => {
-//     console.log('SIGN UP')
-//     let {Username, Email, Password} = req.body
-//     console.log(req.body)
-//     let status = 'Unverified'
-
-//     console.log(process.env.EMAIL_PASSWORD)
-
-//     let con 
-
-//     try {
-//         con = await pool.getConnection()
-//         await con.beginTransaction()
-
-//         let salt = await bcrypt.genSalt(10)
-//         let hashedPassword = await bcrypt.hash(Password, salt)    
-
-//         let sql = 'INSERT INTO Users (Username, Email, Password, Status) VALUES (?, ?, ?, ?)'
-
-//         let result = await con.query(sql, [Username, Email, hashedPassword, status])
-
-//         let userId = result[0].insertId
-
-//         let otp = generateOTP()
-
-//         sql = 'REPLACE INTO otps (User, OTP) VALUES (?, ?)'
-//         await con.query(sql, [userId, otp])
-
-//         let mailOptions = {
-//             from: 'no-reply@managemyexpenses.com',
-//             to: Email,
-//             subject: 'Welcome to ManageMyExpenses',
-//             text: `Hello ${Username}! Welcome to ManageMyExpenses. Your OTP is ${otp}.`,
-//         };
-
-//         // transporter.sendMail(mailOptions, function(error, info){
-//         //     if(error){
-//         //         console.log(error)
-//         //         throw new Error({code: 'EMAIL_ERROR', message: error})
-//         //     }
-//         // })
-//         const info = await transporter.sendMail(mailOptions);
-
-//         await con.commit()
-
-//         res.status(200).send('Email sent.')
-//         // let salt = await bcrypt.genSalt(10)
-//     } catch (error){
-//         if(con) con.rollback()
-//         if(error.code === 'ER_DUP_ENTRY') return res.status(409).send('Email already exists')
-//         console.log(error)
-//         return res.status(500).send('Server Error. Please try again later')
-//     } finally{
-//         if(con) con.release()
-//     }
-// })
-
 rtr.post('/signup', jsonParser, async (req, res) => {
     console.log('SIGN UP')
     let {Username, Email, Password} = req.body
@@ -153,14 +96,14 @@ rtr.post('/signup', jsonParser, async (req, res) => {
     } finally{
         if(con) con.release()
     }
-})
+});
 
 rtr.post('/signin', jsonParser, async (req, res) => {
     let {Username, Password} = req.body
     console.log('SIGN IN')
     console.log(Username, Password)
 
-    let sql = 'SELECT * FROM Users WHERE Username = ?'
+    let sql = 'SELECT * FROM users WHERE Username = ?'
 
     let con 
 
@@ -173,6 +116,9 @@ rtr.post('/signin', jsonParser, async (req, res) => {
             res.cookie('token', token, {
                 httpOnly: true,  // Ensures the cookie is only sent in HTTP requests, not accessible via JavaScript
                 secure: process.env.NODE_ENV === 'production',  // Set secure only in production (HTTPS)
+                // domain: process.env.NODE_ENV === 'production' ? '.netlify.app' : 'localhost',
+                // domain: undefined,
+                path: '/',
                 sameSite: 'Strict',  // Helps prevent CSRF attacks
                 maxAge: 3600000  // 1 hour in milliseconds
             });
@@ -190,24 +136,34 @@ rtr.post('/signin', jsonParser, async (req, res) => {
     } finally {
         if(con) con.release()
     }
-  })
+  });
 
-rtr.get('/signout', (req, res) => {
+rtr.post('/signout', (req, res) => {
+    console.log('SIGN OUT')
     try{
-        res.clearCookie('token')
+        // res.clearCookie('token', {secure: true, sameSite: 'none'})
+        res.cookie('token',  '',{
+            expires: new Date(0),
+            httpOnly: true,  // Ensures the cookie is only sent in HTTP requests, not accessible via JavaScript
+            // domain: process.env.NODE_ENV === 'production' ? '.netlify.app' : 'localhost',
+            // domain: undefined,
+            path: '/',
+            secure: process.env.NODE_ENV === 'production',  // Set secure only in production (HTTPS)
+            sameSite: 'Strict',  // Helps prevent CSRF attacks
+        });
         res.status(200).send('Signout successful')
     } catch(err){
         console.log(err)
         res.status(500).json({message: 'Server Error'})
     }
-})
+});
 
 rtr.get('/checkUsername', async (req, res) => {
     console.log('CHECK USERNAME')
     console.log(req.query)
     let {username} = req.query
     console.log(username)
-    let sql = 'SELECT * FROM Users WHERE Username = ?'
+    let sql = 'SELECT * FROM users WHERE Username = ?'
 
     let con
 
@@ -221,42 +177,7 @@ rtr.get('/checkUsername', async (req, res) => {
 } finally {
     if(con) con.release()
 }
-})
-
-// rtr.post('/checkOTP', jsonParser, async (req, res) => {
-//     console.log('CHECK OTP')
-//     let {Email, OTP} = req.body
-//     let sql = 'SELECT * FROM otps WHERE OTP = ? AND User IN (SELECT ID FROM Users WHERE Email = ?)'
-
-//     let con
-//     try {
-//         con = await pool.getConnection()
-//         await con.beginTransaction()
-
-//         let result = await con.query(sql, [OTP, Email])
-
-//         if(result[0].length > 0){
-//             await con.query('UPDATE Users SET Status = "Active" WHERE Email = ?', [Email])
-//         } else {
-//             console.log('ERRRRRRRR')
-//             const error = new Error('Invalid OTP')
-//             error.code = 'ER_NO_MATCH'
-//             throw error
-//         }
-//         await con.commit()
-
-//         res.status(200).send('Email verified.')
-
-//     } catch (err) {
-//         if(con) con.rollback()
-//         console.log(err.code)
-//         if(err.code === 'ER_NO_MATCH') return res.status(404).send('Invalid OTP')
-        
-//         res.status(500).send('Server Error. Please try again later.')
-//     } finally {
-//         if(con) con.release()
-//     }
-// })
+});
 
 rtr.post('/checkSignUpOTP', jsonParser, async (req, res) => {
     console.log('CHECK OTP')
@@ -273,13 +194,13 @@ rtr.post('/checkSignUpOTP', jsonParser, async (req, res) => {
         console.log(result[0])
 
         if(result[0].length > 0){
-            sql = 'INSERT INTO Users (Username, Email, Password, Status) SELECT Username, Email, Password, "Active" FROM Users_temp WHERE ID = ?'
+            sql = "INSERT INTO users (Username, Email, Password, Status) SELECT Username, Email, Password, 'Active' FROM users_temp WHERE ID = ?"
 
             await con.query(sql, [userId])
 
             await con.query(`DELETE FROM signup_otps WHERE User = ?`, [userId])
 
-            await con.query('DELETE FROM Users_temp WHERE ID = ?', [userId])
+            await con.query('DELETE FROM users_temp WHERE ID = ?', [userId])
 
 
             // await con.query('UPDATE Users SET Status = "Active" WHERE Email = ?', [Email])
@@ -302,7 +223,7 @@ rtr.post('/checkSignUpOTP', jsonParser, async (req, res) => {
     } finally {
         if(con) con.release()
     }
-})
+});
 
 rtr.get('/checkToken', authMiddleware, async (req, res) => {
     res.status(200).send('Authorized')

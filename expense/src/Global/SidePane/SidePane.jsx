@@ -1,16 +1,22 @@
 import './sidePane.css'
-import {useEffect, useState, useRef, useContext} from 'react'
+import {useEffect, useState, useRef, useContext, createContext} from 'react'
 import {CSSTransition} from 'react-transition-group'
 import axios from 'axios'
 import {DialogBoxContext} from '../DialogBox'
 import ProtectedRoute from '../../Pages/Authentication/ProtectedRoute'
+import { AuthContext } from '../../Pages/Authentication/Authenticator'
+import { BrowserRouter, Route, Link, redirect, Outlet, useNavigate } from 'react-router-dom';
 // import {navigate} from 'react-router-dom'
+
+
+export const SidePaneContext = createContext()
 
 export default function SidePane({children}) {
 
     const [open, setOpen] = useState(false)
     const sidePaneRef = useRef()
     const menuBtn = useRef()
+
 
     function menuClick(e){
         setOpen(prev => {
@@ -42,18 +48,16 @@ export default function SidePane({children}) {
     }, [open])
 
     return (
-        <>
-        {/* <ProtectedRoute> */}
+        <SidePaneContext.Provider value={{open: open, setOpen: setOpen}}>
+
         <div className='sp-menu-icon' onClick = {menuClick} ref = {menuBtn} tabIndex={0}>
             <span class="material-symbols-outlined">
                 menu
             </span>
         </div>
 
-        {/* {open && ( */}
         <CSSTransition in={open} timeout={500} classNames="sp" unmountOnExit>
         <div className='sidePane' ref = {sidePaneRef} onBlur = {onBlur} tabIndex={0}>
-            {/* {children} */}
 
             <SidePaneElement url = '/' text = 'Home'/>
 
@@ -67,37 +71,45 @@ export default function SidePane({children}) {
 
         </div>
         </CSSTransition>
-        {/* </ProtectedRoute> */}
-        {/* )} */}
-        {children}
-        </>
+        <Outlet/>
+
+        </SidePaneContext.Provider>
+        
     )
 }
 
 function SidePaneElement({url, text}){
 
     const {setDialogBox, resetDialogBox} = useContext(DialogBoxContext)
+    const {auth, setAuth} = useContext(AuthContext)
+    const {setOpen} = useContext(SidePaneContext)
+    const navigate = useNavigate()
 
     function onClick(){
         if(!url){
-            axios.get('/api/auth/signout', {withCredentials: true})
+            axios.post('/api/auth/signout', {withCredentials: true})
             .then(res => {
                 resetDialogBox()
-                window.location.href = '/'
+                setOpen(false)
+                setAuth(false)
+                // window.location.reload()
             })
             .catch(err => {
                 setDialogBox(prev => ({msg: 'Something went wrong. Please try again later.', spinner: false, show: true, confirm: resetDialogBox}))
                 console.log(err)
             })
-            setDialogBox(prev => ({msg: 'Logging Out...', spinner: true, show: true}))
+            setDialogBox(prev => ({msg: 'Signing Out...', spinner: true, show: true}))
 
         } else {
-            window.location.href = url
+            // window.location.href = url
+            navigate(url)
+            setOpen(false)
         }
     }
 
     return(
         <div className='sp-el' onClick = {onClick} >
+            {/* <Link to = {url}>{text}</Link> */}
             {text}
         </div>
     )

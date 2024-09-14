@@ -8,7 +8,8 @@
     /* background-color: rgba(0, 0, 0, 0.388); */
     z-index: 1000;
     background-color: white;
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     align-items: flex-start;

@@ -5,16 +5,19 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { GlobalDialogBox } from './Global/DialogBox';
 import SidePane from './Global/SidePane/SidePane';
+import Authenticator from './Pages/Authentication/Authenticator';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     // <React.StrictMode>
   <>
-  <GlobalDialogBox>
-    <SidePane>
-      <App />
-    </SidePane>
-  </GlobalDialogBox>
+  <Authenticator>
+    <GlobalDialogBox>
+      {/* <SidePane> */}
+        <App />
+      {/* </SidePane> */}
+    </GlobalDialogBox>
+  </Authenticator>
   </>
   
 // </React.StrictMode>

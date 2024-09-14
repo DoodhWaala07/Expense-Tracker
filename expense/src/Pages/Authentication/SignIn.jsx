@@ -8,6 +8,7 @@ import axios from 'axios'
 import formatData from '../../Global/Functions/formatData'
 import { DialogBoxContext } from '../../Global/DialogBox'
 import { AuthenticationContext } from './Authentication'
+import { useNavigate } from 'react-router-dom'
 
 export default function SignIn() {
     const defaultSignInFields = {
@@ -22,13 +23,20 @@ export default function SignIn() {
 
     const {setAuthType} = useContext(AuthenticationContext)
 
+    const navigate = useNavigate()
+
     function signIn(){
         if(validateEmptyFields(signInFields, setSignInFields).length > 0){
             return null
         }
         axios.post('/api/auth/signin', formatData(signInFields), {withCredentials: true})
         .then(res => {
-            window.location.href = '/'
+            resetDialogBox()
+            // window.location.href = '/'
+            // navigate(`/addExpenses?refresh=${new Date().getTime()}`)
+            setAuthType(true)
+            // navigate(0)
+            // navigate(url)
         })
         .catch(err => {
             // console.log(err)
@@ -39,6 +47,7 @@ export default function SignIn() {
                 setDialogBox(prev => ({msg: 'Something went wrong. Please try again later.', spinner: false, show: true, confirm: resetDialogBox}))
             }
         })
+        setDialogBox(prev => ({msg: 'Signing In...', spinner: true, show: true}))
     }
 
     function goToSignUp(){

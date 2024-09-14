@@ -22,16 +22,6 @@ const authMiddleware = require('./routes/auth/authMiddleware');
 
 // // import { fillUpdateForm } from './functions.js';
 
-// // var hostname = "ia0.h.filess.io";
-
-// // var database = "Expenses_pinkpuredo";
-
-// // var port = "3307";
-
-// // var username = "Expenses_pinkpuredo";
-
-// // var password = "81065691c785a163250f42f5d8c695981295004b";
-
 // // var hostname = 'test-mysql-test07.a.aivencloud.com';
 
 // // var database = 'expense';
