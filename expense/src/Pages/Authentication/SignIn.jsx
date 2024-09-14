@@ -43,6 +43,7 @@ export default function SignIn() {
             // console.log(err)
             // 401 Unauthorized: The request has not been applied because it lacks valid authentication credentials for the target resource.
             if(err.status === 401){
+                resetDialogBox()
                 setError('Invalid Username or Password')
             } else {
                 setDialogBox(prev => ({msg: 'Something went wrong. Please try again later.', spinner: false, show: true, confirm: resetDialogBox}))

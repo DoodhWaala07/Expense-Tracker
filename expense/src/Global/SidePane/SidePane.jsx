@@ -8,7 +8,6 @@ import { AuthContext } from '../../Pages/Authentication/Authenticator'
 import { BrowserRouter, Route, Link, redirect, Outlet, useNavigate } from 'react-router-dom';
 // import {navigate} from 'react-router-dom'
 
-
 export const SidePaneContext = createContext()
 
 export default function SidePane({children}) {
@@ -17,6 +16,7 @@ export default function SidePane({children}) {
     const sidePaneRef = useRef()
     const menuBtn = useRef()
 
+    const {auth} = useContext(AuthContext)
 
     function menuClick(e){
         setOpen(prev => {
@@ -49,12 +49,12 @@ export default function SidePane({children}) {
 
     return (
         <SidePaneContext.Provider value={{open: open, setOpen: setOpen}}>
-
-        <div className='sp-menu-icon' onClick = {menuClick} ref = {menuBtn} tabIndex={0}>
+        
+        {auth && <div className='sp-menu-icon' onClick = {menuClick} ref = {menuBtn} tabIndex={0}>
             <span class="material-symbols-outlined">
                 menu
             </span>
-        </div>
+        </div>}
 
         <CSSTransition in={open} timeout={500} classNames="sp" unmountOnExit>
         <div className='sidePane' ref = {sidePaneRef} onBlur = {onBlur} tabIndex={0}>

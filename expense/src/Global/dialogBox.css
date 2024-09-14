@@ -27,7 +27,21 @@
     align-items: center;
     justify-content: center;
     gap: 15px;
+    box-sizing: border-box;
 }
+
+
+
+@media only screen and (max-width: 600px) {
+    .db-main{
+        width: 90%;
+        height: fit-content;
+        padding-top: 80px;
+        padding-bottom: 60px;
+    }
+}
+
+
 
 .db-msg{
     text-align: center;

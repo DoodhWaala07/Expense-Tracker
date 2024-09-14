@@ -8,7 +8,7 @@
     "react": "cd expense && npm start",
     "api": "cd api && npx nodemon app.js",
     "build": "cd expense && npm run build",
-    "prod": "netlify deploy --prod"
+    "prod": "cd expense && npm run build && cd .. && netlify deploy --prod"
   },
   "keywords": [],
   "author": "",
