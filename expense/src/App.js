@@ -34,14 +34,18 @@ const router = createBrowserRouter([
       },
       {
         path: '/viewExpenses',
-        element: <FilterPane/>,
-        children: [
-          {
-            path: '/viewExpenses',
-            element: <ViewExpenses/>
-          }
-        ]
+        element: <ProtectedRoute><ViewExpenses/></ProtectedRoute>
       },
+      // {
+      //   path: '/viewExpenses',
+      //   element: <FilterPane/>,
+      //   children: [
+      //     {
+      //       path: '/viewExpenses',
+      //       element: <ViewExpenses/>
+      //     }
+      //   ]
+      // },
       // {
       //   path: '/authentication',
       //   element: <Authentication/>

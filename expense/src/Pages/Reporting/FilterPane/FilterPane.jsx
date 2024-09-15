@@ -6,6 +6,8 @@ import { DialogBoxContext } from '../../../Global/DialogBox';
 import { BrowserRouter, Route, Link, redirect, Outlet, useNavigate } from 'react-router-dom';
 import MyForm from '../../../Global/Form/MyForm';
 import InputField from '../../../Global/InputField';
+import CategoryFilter from './CategoryFilter';
+import FilterFloats from './FilterFloats/FilterFloats';
 
 export const FilterPaneContext = createContext()
 
@@ -14,13 +16,6 @@ export default function FilterPane() {
     const [open, setOpen] = useState(true)
     const sidePaneRef = useRef()
     const menuBtn = useRef()
-
-    const defaultCategoryFields = {
-        'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, api: '/api/category'},
-        // 'Sub_Category': {value: '', placeholder: 'Sub-Category', type: 'select', ref: {}, req: true, disabled: true, api: '/api/subcategory'},
-    }
-
-    const [categoryFields, setCategoryFields] = useState(defaultCategoryFields)
 
     // const {auth} = useContext(AuthContext)
 
@@ -59,35 +54,10 @@ export default function FilterPane() {
         <div className='filterPane' ref = {sidePaneRef} onBlur = {onBlur} tabIndex={0}>
 
             <h1 style={{marginLeft: '15px'}}>Filters</h1>
-            {/* <div>Filter</div> */}
 
-            {/* <SidePaneElement url = '/' text = 'Home'/>
+            {/* <CategoryFilter/> */}
 
-            <SidePaneElement url = '/addCategory' text = 'Add Category'/>
-
-            <SidePaneElement url = '/editCategory' text = 'Edit Category'/>
-
-            <SidePaneElement url = '/addExpenses' text = 'Add Expenses'/>
-
-            <SidePaneElement url = '' text = 'Sign Out'/> */}
-
-            <FilterPaneElement url = '/addCategory' text = 'Category'>
-                <MyForm fields = {categoryFields} setFields = {setCategoryFields}>
-                    {Object.entries(categoryFields).map(([key, field], i) => {
-                        return <InputField key = {i} id = {key} label = {field.label || key} placeholder = {field.label || field.placeholder || key} 
-                        type = {field.type} ref = {field.ref} error={field.error} className={field.className}/>
-                    })}
-                </MyForm>
-            </FilterPaneElement>
-
-            <FilterPaneElement url = '/addCategory' text = 'Category'>
-                <MyForm fields = {categoryFields} setFields = {setCategoryFields}>
-                    {Object.entries(categoryFields).map(([key, field], i) => {
-                        return <InputField key = {i} id = {key} label = {field.label || key} placeholder = {field.label || field.placeholder || key} 
-                        type = {field.type} ref = {field.ref} error={field.error} className={field.className}/>
-                    })}
-                </MyForm>
-            </FilterPaneElement>
+            <CategoryFilter/>
 
         </div>
         </CSSTransition>
@@ -98,9 +68,9 @@ export default function FilterPane() {
     )
 }
 
-function FilterPaneElement({url, text, children}) {
+export function FilterPaneElement({url, text, children}) {
 
-    const {setOpen} = useContext(FilterPaneContext)
+    // const {setOpen} = useContext(FilterPaneContext)
 
     const [openEl, setOpenEl] = useState(false)
 
@@ -117,14 +87,11 @@ function FilterPaneElement({url, text, children}) {
                 </span>
             </div>
 
-
-            <div className='fp-el-content-wrapper'>
-                <CSSTransition in={openEl} timeout={500} classNames="fp-el-content" unmountOnExit>
-                    <div className='fp-el-content'>
-                        {children}
-                    </div>
-                </CSSTransition>
-            </div>
+            <CSSTransition in={openEl} timeout={500} classNames="fp-el-content" unmountOnExit>
+                <div className='fp-el-content'>
+                    {children}
+                </div>
+            </CSSTransition>
         </div>
     )
 }

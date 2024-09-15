@@ -79,14 +79,13 @@
 
   .searchFieldWrapper{
     position: relative;
-    display: block;
-    /* display: flex;
+    /* display: block; */
+    display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center; */
+    align-items: center;
     width: fit-content;
     /* border: 1px solid black; */
-    /* border: 1px solid blue; */
   }
 
   .searchResultDiv{
@@ -97,10 +96,10 @@
     width: 90%;
     top: 100%;
     left: 50%;
-    transform: translate(-50%);
+    /* transform: translate(-50%); */
     background-color: white;
     user-select: none;
-    z-index: 1;
+    z-index: 6000;
     max-height: 200px;
     overflow-y: scroll;
   }

@@ -16,70 +16,11 @@ const cors = require('cors')
 const {Server} = require('socket.io');
 const serverless = require('serverless-http');
 const authRouter = require('./routes/auth/auth')
+const filterRouter = require('./routes/filter')
 const pool = require('./database/pool');
 const authMiddleware = require('./routes/auth/authMiddleware');
 // const { socket } = require('./client/src/socket');
 
-// // import { fillUpdateForm } from './functions.js';
-
-// // var hostname = 'test-mysql-test07.a.aivencloud.com';
-
-// // var database = 'expense';
-
-// // var port = '13552';
-
-// // var username = 'avnadmin';
-
-// // var password = 'AVNS_JCwKfM806pmWv5gTcnO';
-
-// const hostname = 'localhost';
-// const username = 'root';
-// const password = 'Maheen123';
-// const database = 'expenses';
-// const port = '3306';
-// const connectionLimit = 10;
-// const connectTimeout = 10000;
-
-// // var db = mysql1.createConnection({
-
-// //   host: hostname,
-
-// //   user: username,
-
-// //   password,
-
-// //   database,
-
-// //   port,
-
-// // });
-
-// const pool = mysql.createPool({
-//   host: hostname,
-//   user: username,
-//   password,
-//   database,
-//   port,
-//   connectionLimit: connectionLimit,
-//   connectTimeout: connectTimeout
-// });
-
-
-// const db = mysql1.createConnection({
-//   host: 'localhost',
-//   user: 'root',
-//   password: 'Maheen123',
-//   database: 'expenses'
-// });
-
-// const pool = mysql.createPool({
-//   host: 'localhost',
-//   user: 'root',
-//   password: 'Maheen123',
-//   database: 'expenses',
-//   connectionLimit: 10,
-//   connectTimeout: 10000,
-// });
 
 async function connectDB() {
   try{
@@ -90,8 +31,6 @@ async function connectDB() {
   }
 }
 
-
-
 // db.connect((err)=>{
 //   if (err) throw err;
 //   console.log('Database connected.');
@@ -100,12 +39,6 @@ async function connectDB() {
 dotenv.config()
 
 var jsonParser = bodyParser.json()
-
-// const verifyToken = verifyTokens.verifyToken
-
-// const verifyToken2 = verifyTokens.verifyToken2
-
-// const decodedToken = verifyTokens.decodedToken
 
 const app = express();
 
@@ -122,7 +55,10 @@ app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true
 }))
+
+//ROUTERS
 app.use('/api/auth', authRouter)
+app.use('/api/filter', filterRouter)
 
 const io = new Server(app.listen(process.env.PORT, ()=>{console.log("Listening.")}), {
   cors: {
