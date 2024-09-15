@@ -4,14 +4,23 @@ import {CSSTransition} from 'react-transition-group'
 import axios from 'axios'
 import { DialogBoxContext } from '../../../Global/DialogBox';
 import { BrowserRouter, Route, Link, redirect, Outlet, useNavigate } from 'react-router-dom';
+import MyForm from '../../../Global/Form/MyForm';
+import InputField from '../../../Global/InputField';
 
 export const FilterPaneContext = createContext()
 
 export default function FilterPane() {
 
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(true)
     const sidePaneRef = useRef()
     const menuBtn = useRef()
+
+    const defaultCategoryFields = {
+        'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true, api: '/api/category'},
+        // 'Sub_Category': {value: '', placeholder: 'Sub-Category', type: 'select', ref: {}, req: true, disabled: true, api: '/api/subcategory'},
+    }
+
+    const [categoryFields, setCategoryFields] = useState(defaultCategoryFields)
 
     // const {auth} = useContext(AuthContext)
 
@@ -22,12 +31,12 @@ export default function FilterPane() {
     }
 
     function onBlur(e){
-        setTimeout(() => {
-            // console.log(document.activeElement)
-            if(document.activeElement !== menuBtn.current){
-                setOpen(false)  
-            }
-        }, 0)
+        // setTimeout(() => {
+        //     // console.log(document.activeElement)
+        //     if(document.activeElement !== menuBtn.current){
+        //         setOpen(false)  
+        //     }
+        // }, 0)
         
     }
 
@@ -62,6 +71,24 @@ export default function FilterPane() {
 
             <SidePaneElement url = '' text = 'Sign Out'/> */}
 
+            <FilterPaneElement url = '/addCategory' text = 'Category'>
+                <MyForm fields = {categoryFields} setFields = {setCategoryFields}>
+                    {Object.entries(categoryFields).map(([key, field], i) => {
+                        return <InputField key = {i} id = {key} label = {field.label || key} placeholder = {field.label || field.placeholder || key} 
+                        type = {field.type} ref = {field.ref} error={field.error} className={field.className}/>
+                    })}
+                </MyForm>
+            </FilterPaneElement>
+
+            <FilterPaneElement url = '/addCategory' text = 'Category'>
+                <MyForm fields = {categoryFields} setFields = {setCategoryFields}>
+                    {Object.entries(categoryFields).map(([key, field], i) => {
+                        return <InputField key = {i} id = {key} label = {field.label || key} placeholder = {field.label || field.placeholder || key} 
+                        type = {field.type} ref = {field.ref} error={field.error} className={field.className}/>
+                    })}
+                </MyForm>
+            </FilterPaneElement>
+
         </div>
         </CSSTransition>
         <Outlet/>
@@ -71,39 +98,33 @@ export default function FilterPane() {
     )
 }
 
-// function SidePaneElement({url, text}){
+function FilterPaneElement({url, text, children}) {
 
-//     const {setDialogBox, resetDialogBox} = useContext(DialogBoxContext)
-//     const {auth, setAuth} = useContext(AuthContext)
-//     const {setOpen} = useContext(FilterPaneContext)
-//     const navigate = useNavigate()
+    const {setOpen} = useContext(FilterPaneContext)
 
-//     function onClick(){
-//         if(!url){
-//             axios.post('/api/auth/signout', {withCredentials: true})
-//             .then(res => {
-//                 resetDialogBox()
-//                 setAuth(false)
-//                 setOpen(false)
-//                 // window.location.reload()
-//             })
-//             .catch(err => {
-//                 setDialogBox(prev => ({msg: 'Something went wrong. Please try again later.', spinner: false, show: true, confirm: resetDialogBox}))
-//                 console.log(err)
-//             })
-//             setDialogBox(prev => ({msg: 'Signing Out...', spinner: true, show: true}))
+    const [openEl, setOpenEl] = useState(false)
 
-//         } else {
-//             // window.location.href = url
-//             navigate(url)
-//             setOpen(false)
-//         }
-//     }
+    function onClick(e){
+        setOpenEl(prev => !prev)
+    }
 
-//     return(
-//         <div className='sp-el' onClick = {onClick} >
-//             {/* <Link to = {url}>{text}</Link> */}
-//             {text}
-//         </div>
-//     )
-// }
+    return(
+        <div className='fp-el-wrapper'>
+            <div className='fp-el-header' onClick = {onClick} >
+                {text}
+                <span class="material-symbols-outlined fp-el-icon">
+                    {!openEl ? 'keyboard_arrow_right' : 'keyboard_arrow_down'}
+                </span>
+            </div>
+
+
+            <div className='fp-el-content-wrapper'>
+                <CSSTransition in={openEl} timeout={500} classNames="fp-el-content" unmountOnExit>
+                    <div className='fp-el-content'>
+                        {children}
+                    </div>
+                </CSSTransition>
+            </div>
+        </div>
+    )
+}
