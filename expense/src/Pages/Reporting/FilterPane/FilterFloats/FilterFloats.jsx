@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import './filterFloats.css'
 
 
@@ -32,10 +33,14 @@ export function FilterFloatsContainer({filterFloats, setFilterFloats, onClose}) 
         }
     }
 
+    // useEffect(() => {
+    //     console.log(filterFloats)
+    // }, [filterFloats])
+
     return(
-        filterFloats.length > 0 && <div className='filterFloatsContainer'>
+        filterFloats?.length > 0 && <div className='filterFloatsContainer'>
             {filterFloats.map((filter, i) => {
-                return <FilterFloats key = {i} name = {filter.Name || filter} onClose = {() => close(filter)}/>
+                return <FilterFloats key = {i} name = {filter?.Name || filter} onClose = {() => close(filter)}/>
             })}
         </div>
     )

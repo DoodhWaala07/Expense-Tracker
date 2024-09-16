@@ -1,9 +1,9 @@
 import { useEffect, useState, useContext } from 'react'
-import {FilterPaneElement} from './FilterPane'
-import MyForm from '../../../Global/Form/MyForm'
-import InputField from '../../../Global/InputField'
-import FilterFloats, { FilterFloatsContainer } from './FilterFloats/FilterFloats'
-import {ViewExpensesContext} from '../ViewExpenses'
+import {FilterPaneElement} from '../FilterPane'
+import MyForm from '../../../../Global/Form/MyForm'
+import InputField from '../../../../Global/InputField'
+import FilterFloats, { FilterFloatsContainer } from '../FilterFloats/FilterFloats'
+import {ViewExpensesContext} from '../../ViewExpenses'
 
 export default function CategoryFilter() {
 
@@ -13,7 +13,7 @@ export default function CategoryFilter() {
         let category = categoryFields['Category'].value
         console.log(filterFloats)
         console.log(category)
-        if(category  && !filterFloats.find(filter => (filter.ID === category.ID) || (filter === category))){
+        if(category && !filterFloats.find(filter => (filter.ID === category.ID) || (filter === category))){
             setFilterFloats(prev => [...prev, category])
         }
         if(category){
@@ -49,7 +49,7 @@ export default function CategoryFilter() {
                         <InputField key = {i} id = {key} label = {field.label || key} placeholder = {field.label || field.placeholder || key} 
                         type = {field.type} ref = {field.ref} error={field.error} className={field.className}/>
                         <FilterFloatsContainer filterFloats = {field.floats} setFilterFloats = {field.setFloats} onClose = {field.onClose || null}/>
-                    </>
+                    </> 
                     )
                 })}
             </MyForm>

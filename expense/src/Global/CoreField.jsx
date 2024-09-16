@@ -14,6 +14,8 @@ export default function CoreField({label, placeholder, id, type, error, onClick,
         })
     }
 
+    let fieldType = fields[id].type !== 'select' && fields[id].type !== 'search' && fields[id].type !== 'number' ? fields[id].type : 'text'
+
     return (
         <input className= {`inputField`} placeholder={placeholder.replaceAll('_', ' ')} 
         style={{cursor: 'pointer', borderColor: fields[id].error ? 'red' : ''}} 
@@ -22,7 +24,8 @@ export default function CoreField({label, placeholder, id, type, error, onClick,
         ref={fields[id].ref}
         readOnly = {fields[id].type === 'select' || fields[id].type === 'search' ? true : false}
         disabled = {fields[id].disabled === null || fields[id].disabled  === undefined ? false : fields[id].disabled}
-        type = {fields[id].type === 'password' ? 'password' : 'text'}
+        // type = {fields[id].type === 'password' ? 'password' : 'text'}
+        type = {fieldType}
         />
     )
 }

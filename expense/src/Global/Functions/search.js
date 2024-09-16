@@ -105,11 +105,11 @@ export function searchAPI({input, type = '', setState, api, page = 1, limit, pag
 }
 
 export function staticLists({input, type = '', setState, api, page = 1, list}){
-    // setState(prev => {
-    //     return {...prev, data: list}
-    // })
+    console.log('LISSTS')
+    console.log(list)
     setState(prev => {
-        return {...prev, data: input ? filterList({list: list, input: input}) : list}   
+        // return {...prev, data: input ? filterList({list: list, input: input}) : list}  
+        return {...prev, loading: false, data : list}
     })
 }
 

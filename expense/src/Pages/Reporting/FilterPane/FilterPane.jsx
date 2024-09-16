@@ -6,8 +6,9 @@ import { DialogBoxContext } from '../../../Global/DialogBox';
 import { BrowserRouter, Route, Link, redirect, Outlet, useNavigate } from 'react-router-dom';
 import MyForm from '../../../Global/Form/MyForm';
 import InputField from '../../../Global/InputField';
-import CategoryFilter from './CategoryFilter';
+import CategoryFilter from './CategoryFilter/CategoryFilter';
 import FilterFloats from './FilterFloats/FilterFloats';
+import DateFilter from './DateFilter/DateFilter';
 
 export const FilterPaneContext = createContext()
 
@@ -26,13 +27,12 @@ export default function FilterPane() {
     }
 
     function onBlur(e){
-        // setTimeout(() => {
-        //     // console.log(document.activeElement)
-        //     if(document.activeElement !== menuBtn.current){
-        //         setOpen(false)  
-        //     }
-        // }, 0)
-        
+        setTimeout(() => {
+            if(document.activeElement !== menuBtn.current && !sidePaneRef.current.contains(document.activeElement)){
+                setOpen(false)  
+            }
+
+        }, 0)
     }
 
     useEffect(() => {
@@ -55,9 +55,8 @@ export default function FilterPane() {
 
             <h1 style={{marginLeft: '15px'}}>Filters</h1>
 
-            {/* <CategoryFilter/> */}
-
             <CategoryFilter/>
+            <DateFilter/>
 
         </div>
         </CSSTransition>
@@ -72,11 +71,41 @@ export function FilterPaneElement({url, text, children}) {
 
     // const {setOpen} = useContext(FilterPaneContext)
 
-    const [openEl, setOpenEl] = useState(false)
+    const [openEl, setOpenEl] = useState(true)
 
     function onClick(e){
         setOpenEl(prev => !prev)
     }
+
+    const contentRef = useRef(null);
+
+    // Before the enter transition starts, set max-height to the content's scrollHeight
+    const handleEnter = () => {
+      if (contentRef.current) {
+        contentRef.current.style.maxHeight = `${contentRef.current.scrollHeight}px`;
+      }
+    };
+
+    // After the enter transition finishes, remove max-height to allow dynamic height changes
+    const handleEntered = () => {
+      if (contentRef.current) {
+        contentRef.current.style.maxHeight = 'none';
+      }
+    };
+
+    // Before the exit transition starts, set max-height back to scrollHeight for smooth collapsing
+    const handleExit = () => {
+      if (contentRef.current) {
+        contentRef.current.style.maxHeight = `${contentRef.current.scrollHeight}px`;
+      }
+    };
+
+    // During the exit transition, set max-height to 0 to collapse
+    const handleExiting = () => {
+      if (contentRef.current) {
+        contentRef.current.style.maxHeight = '0';
+      }
+    };
 
     return(
         <div className='fp-el-wrapper'>
@@ -87,8 +116,9 @@ export function FilterPaneElement({url, text, children}) {
                 </span>
             </div>
 
-            <CSSTransition in={openEl} timeout={500} classNames="fp-el-content" unmountOnExit>
-                <div className='fp-el-content'>
+            <CSSTransition in={openEl} timeout={500} classNames="fp-el-content" unmountOnExit
+            onEnter={handleEnter} onEntered={handleEntered} onExit={handleExit} onExiting={handleExiting}>
+                <div className='fp-el-content' ref = {contentRef}>
                     {children}
                 </div>
             </CSSTransition>
