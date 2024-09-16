@@ -1,10 +1,14 @@
 import { createContext, useEffect, useState } from 'react'
 import FilterPane from './FilterPane/FilterPane'
 import './viewExpenses.css'
+import ExpenseDisplayRow from './ExpenseDisplayRow/ExpenseDisplayRow'
+import axios from 'axios'
 
 export const ViewExpensesContext = createContext()
 
 export default function ViewExpenses() {
+
+    //SET UP FOR FILTER PANE
 
     const [filterFloats, setFilterFloats] = useState([])
     const [subCatFilterFloats, setSubCatFilterFloats] = useState([])
@@ -66,8 +70,30 @@ export default function ViewExpenses() {
                     ['Category']: {...prev['Category'], floats: filterFloats, setFloats: setFilterFloats}
                 }
             })
+            getExpenses()
         // }
     }, [filterFloats, subCatFilterFloats])
+
+    //END SETUP FOR FILTER PANE
+
+    //BEGIN FETCHING EXPENSES
+
+    const [expenses, setExpenses] = useState([])
+
+    function getExpenses() {
+        axios.get('/api/expenses', {params: {categoryFilters: filterFloats, dateFilters: dateFilterFloats, subCatFilters: subCatFilterFloats}})
+       .then(res => {
+           console.log(res.data)
+           setExpenses(res.data)
+       })
+       .catch(err => {
+           console.log(err)
+       })
+    }
+
+    useEffect(() => {
+       
+    }, [])
     
     return(
         <>
@@ -79,11 +105,34 @@ export default function ViewExpenses() {
         >
          <div className='ve-main'>
             <h1>View Expenses</h1>
-
+            <ExpenseDisplayRow expense = {expenseHeadings} heading = {true}/>
+            {expenses.map((expense, i) => {
+                return (
+                    <ExpenseDisplayRow expense = {expense} key = {i}/>
+                )
+            })}
         </div>
         <FilterPane/>
         </ViewExpensesContext.Provider>
         </>
         
     )
+}
+
+const testExpense = {
+    'Category': 'Food',
+    'Sub_Category': 'Dinner',
+    'Quantity': 1,
+    'Amount': 100,
+    'Description': 'Dinner with friends.',
+    'Date': '2021-11-23',
+}
+
+const expenseHeadings = {
+    'Category': 'Category',
+    'Sub_Category': 'Sub-Cat',
+    // 'Quantity': 'Quantity',
+    'Amount': 'Amount',
+    // 'Description': 'Description',
+    'Date': 'Date',
 }

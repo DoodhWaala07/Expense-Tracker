@@ -151,7 +151,7 @@
     display: block;
     border-radius: 10px;
     width: 90%;
-    /* transform: none; */
+    transform: none;
     /* top: 100%;
     left: 50%;
     transform: translate(-50%); */

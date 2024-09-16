@@ -298,22 +298,57 @@ app.post('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
   }
 })
 
-// app.post('/api/auth/signin', jsonParser, async (req, res) => {
-//   // let {username, email, password} = req.body
-//   console.log('AUTH')
-//   console.log(req.body)
-//   // console.log(username, email, password)
-// })
+app.get('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
+  console.log('GET EXPENSES')
+  let {categoryFilters, dateFilters, subCatFilters} = req.query
 
-// app.get('/api/*', (req,res) => {
-//   // res.sendFile(path.join(__dirname,'../expense/build/index.html'));
-//   res.redirect('/editCategory');
-// })
+  categoryFilters = categoryFilters ? categoryFilters : []
+  dateFilters = dateFilters ? dateFilters : []
+  subCatFilters = subCatFilters ? subCatFilters : []
 
-// app.get('/route', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../expense/build/index.html'));
-// });
+  let userId = req.user.id
+  let whereParams = [userId]
+  // console.log(categoryFilters)
 
-// app.get('*', (req, res) => {
-//   res.redirect('/route');
-// });
+  //BEGIN FILTERS
+  let categoryFilterClause = ''
+  categoryFilters = categoryFilters.map(cat => {
+    return cat.ID
+  })
+  categoryFilterClause = categoryFilters.length ? ` AND expenses.Category IN (?)` : ''
+  categoryFilters.length ? whereParams.push(categoryFilters) : null
+
+  let subCatFilterClause = ''
+  subCatFilters = subCatFilters.map(sub => {
+    return sub.ID
+  })
+  subCatFilterClause = subCatFilters.length ? ` AND expenses.Sub_Category IN (?)` : ''
+  subCatFilters.length ? whereParams.push(subCatFilters) : null
+  
+
+  let sql = `SELECT category.Name AS Category, sub_category.Name AS Sub_Category, expenses.Amount, transactions.Date, 
+  expenses.Quantity, CONCAT(transactions.Note, ' ', expenses.Note) AS Description
+  FROM expenses INNER JOIN transactions ON expenses.Transaction = transactions.ID 
+  INNER JOIN category ON expenses.Category = category.ID
+  INNER JOIN sub_category ON expenses.Sub_Category = sub_category.ID
+  WHERE transactions.User = ?` + categoryFilterClause + subCatFilterClause
+  let con
+  try{
+    con = await pool.getConnection()
+
+    let result = await con.query(sql, whereParams)
+
+    // console.log(result[0])
+
+    res.send(result[0])
+
+  } catch(err){
+    console.log(err)
+  } finally{
+    if(con){
+      con.release()
+    }
+  }
+}
+)
+
