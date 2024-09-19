@@ -47,9 +47,7 @@ rtr.post('/signup', jsonParser, async (req, res) => {
     console.log(req.body)
     let status
 
-    console.log(process.env.EMAIL_PASSWORD)
-
-    let con 
+    let con
 
     try {
         con = await pool.getConnection()
