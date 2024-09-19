@@ -42,5 +42,13 @@ rtr.get('/subcategory', jsonParser, authMiddleware, async (req, res) => {
         con.release()
       }
     }
-  })
+})
+
+function dateFilterSQL(filter, columnName){
+  let sql
+  switch(filter){
+    case 'curr_day':
+      sql = ' AND ' + columnName + ' >= ? AND ' + columnName + ' <= ? '
+  }
+}
   

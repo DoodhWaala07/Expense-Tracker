@@ -1,9 +1,12 @@
 export default function utcDate(date){
-    date = date.replace(' ', 'T')
-    return new Date(date + 'Z')
+    console.log(date)
+    date = date.replace(' ', 'T') + 'Z'
+    console.log(new Date(date))
+    return new Date(date)
 }
 
 export function shortDate(date){
+    // return utcDate(date)
     return utcDate(date).toLocaleString('en-GB', {
         style: 'short',
         year: 'numeric',
@@ -13,6 +16,7 @@ export function shortDate(date){
 }
 
 export function shortDateTime(date){
+    // return utcDate(date)
     return utcDate(date).toLocaleString('en-GB', {
         style: 'short',
         year: 'numeric',
@@ -21,4 +25,8 @@ export function shortDateTime(date){
         hour: 'numeric',
         minute: 'numeric'
 })
+}
+
+export function timeZone(){
+    return Intl.DateTimeFormat().resolvedOptions().timeZone
 }

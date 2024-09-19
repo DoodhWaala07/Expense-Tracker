@@ -3,6 +3,7 @@ import FilterPane from './FilterPane/FilterPane'
 import './viewExpenses.css'
 import ExpenseDisplayRow from './ExpenseDisplayRow/ExpenseDisplayRow'
 import axios from 'axios'
+import { timeZone } from '../../Global/Functions/date'
 
 export const ViewExpensesContext = createContext()
 
@@ -82,7 +83,14 @@ export default function ViewExpenses() {
     const [expenses, setExpenses] = useState([])
 
     function getExpenses() {
-        axios.get('/api/expenses', {params: {categoryFilters: filterFloats, dateFilters: dateFilterFloats, subCatFilters: subCatFilterFloats}})
+        axios.get('/api/expenses', {
+            params: {
+                categoryFilters: filterFloats, 
+                dateFilters: dateFilterFloats, 
+                subCatFilters: subCatFilterFloats,
+                timeZone: timeZone(),
+                timePeriod: dateFields['Time_Period'].value.ID
+            }})
        .then(res => {
            console.log(res.data)
            setExpenses(res.data)
@@ -128,6 +136,7 @@ export default function ViewExpenses() {
                     <ExpenseDisplayRow expense = {expense} key = {i}/>
                 )
             })}
+            <div>{timeZone()}</div>
         </div>
         <FilterPane/>
         </ViewExpensesContext.Provider>

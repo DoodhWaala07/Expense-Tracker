@@ -44,7 +44,8 @@ const pool = mysql.createPool({
   database: database,
   port:port,
   connectionLimit: connectionLimit,
-  connectTimeout: connectTimeout
+  connectTimeout: connectTimeout,
+  dateStrings: true
 });
 
 module.exports = pool
