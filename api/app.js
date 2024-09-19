@@ -338,7 +338,7 @@ app.get('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
 
     let result = await con.query(sql, whereParams)
 
-    // console.log(result[0])
+    console.log(result[0])
 
     res.send(result[0])
 

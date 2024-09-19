@@ -1,5 +1,7 @@
+import utcDate, { shortDate, shortDateTime } from '../../../Global/Functions/date'
+import { ViewExpensesContext } from '../ViewExpenses'
 import './expenseDisplayRow.css'
-import { useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 const overviewValues = ['Category', 'Sub_Category', 'Date', 'Amount']
 const excludeValues = ['Transaction', 'Note', 'ID']
@@ -7,6 +9,16 @@ const excludeValues = ['Transaction', 'Note', 'ID']
 export default function ExpenseDisplayRow({expense, heading = false}){
 
     const [open, setOpen] = useState(false)
+    const {windowWidth} = useContext(ViewExpensesContext)
+    const [dateStyle, setDateStyle] = useState('short')
+
+    useEffect(() => {
+        if(windowWidth >=  500){
+            setDateStyle('long')
+        } else {
+            setDateStyle('short')
+        }
+    }, [windowWidth])
 
     return(
         
@@ -14,6 +26,9 @@ export default function ExpenseDisplayRow({expense, heading = false}){
         fontSize: heading ? 'normal' : 'small', marginBottom: heading ? '10px' : '0px', position: heading ? 'sticky' : 'static'}}>
             <div className = 'edr-wrapper'>
                 {Object.entries(expense).map(([key, value], i) => {
+                    if(key === 'Date' && !heading){
+                        value = dateStyle === 'long' ? shortDateTime(value) : shortDate(value)
+                    }
                     if(overviewValues.includes(key)){
                         return <div key = {key} className = 'edr-el'>{value}</div>
                     }

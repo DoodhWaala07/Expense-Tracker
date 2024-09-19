@@ -14,7 +14,7 @@ export const FilterPaneContext = createContext()
 
 export default function FilterPane() {
 
-    const [open, setOpen] = useState(true)
+    const [open, setOpen] = useState(false)
     const sidePaneRef = useRef()
     const menuBtn = useRef()
 

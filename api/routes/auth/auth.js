@@ -122,7 +122,7 @@ rtr.post('/signin', jsonParser, async (req, res) => {
         let [[result]] = await con.query(sql, [Username])
         console.log(result)
         if(result && bcrypt.compareSync(Password, result.Password)){
-            const token = jwt.sign({id: result.ID, username: result.Username}, process.env.JWT_SECRET, {expiresIn: '1hr'})
+            const token = jwt.sign({id: result.ID, username: result.Username}, process.env.JWT_SECRET);
             res.cookie('token', token, {
                 httpOnly: true,  // Ensures the cookie is only sent in HTTP requests, not accessible via JavaScript
                 secure: process.env.NODE_ENV === 'production',  // Set secure only in production (HTTPS)

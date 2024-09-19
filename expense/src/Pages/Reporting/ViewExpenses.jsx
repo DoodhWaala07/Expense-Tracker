@@ -13,6 +13,7 @@ export default function ViewExpenses() {
     const [filterFloats, setFilterFloats] = useState([])
     const [subCatFilterFloats, setSubCatFilterFloats] = useState([])
     const [dateFilterFloats, setDateFilterFloats] = useState([])
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth)
 
     function onRemoveCategory(category){
         console.log('ON REMOVE CATEGORY')
@@ -94,13 +95,29 @@ export default function ViewExpenses() {
     useEffect(() => {
        
     }, [])
+
+    useEffect(() => {
+        window.addEventListener('resize', () => {
+            console.log('WINDOW RESIZE: ' + window.innerWidth)
+            setWindowWidth(window.innerWidth)
+        })
+
+        return () => {
+            window.removeEventListener('resize', () => {
+                setWindowWidth(window.innerWidth)
+            })
+        }
+    }, [])
+
+    console.log()
     
     return(
         <>
         <ViewExpensesContext.Provider value={{
             categoryFields, setCategoryFields, filterFloats, 
             setFilterFloats, subCatFilterFloats, setSubCatFilterFloats,
-            dateFields, setDateFields, defaultDateFields, dateFilterFloats, setDateFilterFloats
+            dateFields, setDateFields, defaultDateFields, dateFilterFloats, setDateFilterFloats, 
+            windowWidth
         }}
         >
          <div className='ve-main'>
