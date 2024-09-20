@@ -382,40 +382,54 @@ function dateFilterSQL({filter, date, column, timeZone, whereParams = [], specif
   let sql = ''
   switch(filter) {
     case 'curr_day':
-      sql = ` AND DATE(CONVERT_TZ(${column}, 'UTC', '${timeZone}')) = DATE(CONVERT_TZ(NOW(), 'UTC', '${timeZone}'))`
+      sql = ` AND DATE(CONVERT_TZ(${column}, 'UTC', ?)) = DATE(CONVERT_TZ(NOW(), 'UTC', ?))`
       console.log(sql)
+      whereParams.push(timeZone, timeZone)
       // sql = ` AND DATE(CONVERT_TZ(transactions.Date, 'UTC', 'Asia/Karachi')) = DATE(CONVERT_TZ('2024-09-18 22:00:00', 'UTC', 'Asia/Karachi'))`
       // allFilters.push(date)
       break;
     case 'last_day':
-      sql = ` AND DATE(CONVERT_TZ(${column}, 'UTC', '${timeZone}')) = DATE(CONVERT_TZ(NOW() - INTERVAL 1 DAY, 'UTC', '${timeZone}'))`
+      sql = ` AND DATE(CONVERT_TZ(${column}, 'UTC', ?)) = DATE(CONVERT_TZ(NOW() - INTERVAL 1 DAY, 'UTC', ?))`
+      whereParams.push(timeZone, timeZone)
       // allFilters.push(date)
       break;
     case 'curr_week':
-      sql = ` AND YEARWEEK(CONVERT_TZ(${column}, 'UTC', '${timeZone}'), 1) = YEARWEEK(CONVERT_TZ(NOW(), 'UTC', '${timeZone}'), 1)`
+      sql = ` AND YEARWEEK(CONVERT_TZ(${column}, 'UTC', ?), 1) = YEARWEEK(CONVERT_TZ(NOW(), 'UTC', ?), 1)`
+      whereParams.push(timeZone, timeZone)
       break;
     case 'last_week':
-      sql = ` AND YEARWEEK(CONVERT_TZ(${column}, 'UTC', '${timeZone}'), 1) = YEARWEEK(CONVERT_TZ(NOW() - INTERVAL 1 WEEK, 'UTC', '${timeZone}'), 1)`
+      sql = ` AND YEARWEEK(CONVERT_TZ(${column}, 'UTC', ?), 1) = YEARWEEK(CONVERT_TZ(NOW() - INTERVAL 1 WEEK, 'UTC', ?), 1)`
+      whereParams.push(timeZone, timeZone)
       break;
     case 'curr_month':
-      sql = ` AND MONTH(CONVERT_TZ(${column}, 'UTC', '${timeZone}')) = MONTH(CONVERT_TZ(NOW(), 'UTC', '${timeZone}'))`
+      sql = ` AND MONTH(CONVERT_TZ(${column}, 'UTC', ?)) = MONTH(CONVERT_TZ(NOW(), 'UTC', ?))`
+      whereParams.push(timeZone, timeZone)
       break;
     case 'last_month':
-      sql = ` AND MONTH(CONVERT_TZ(${column}, 'UTC', '${timeZone}')) = MONTH(CONVERT_TZ(NOW() - INTERVAL 1 MONTH, 'UTC', '${timeZone}'))`
+      sql = ` AND MONTH(CONVERT_TZ(${column}, 'UTC', ?)) = MONTH(CONVERT_TZ(NOW() - INTERVAL 1 MONTH, 'UTC', ?))`
+      whereParams.push(timeZone, timeZone)
       break;
     case 'curr_year':
-      sql = ` AND YEAR(CONVERT_TZ(${column}, 'UTC', '${timeZone}')) = YEAR(CONVERT_TZ(NOW(), 'UTC', '${timeZone}'))`
+      sql = ` AND YEAR(CONVERT_TZ(${column}, 'UTC', ?)) = YEAR(CONVERT_TZ(NOW(), 'UTC', ?))`
+      whereParams.push(timeZone, timeZone)
       break;
     case 'last_year':
-      sql = ` AND YEAR(CONVERT_TZ(${column}, 'UTC', '${timeZone}')) = YEAR(CONVERT_TZ(NOW() - INTERVAL 1 YEAR, 'UTC', '${timeZone}'))`
+      sql = ` AND YEAR(CONVERT_TZ(${column}, 'UTC', ?)) = YEAR(CONVERT_TZ(NOW() - INTERVAL 1 YEAR, 'UTC', ?))`
+      whereParams.push(timeZone, timeZone)
       break;
     case 'specific':
       if(specificDates.length){
-      sql = ` AND DATE(CONVERT_TZ(transactions.Date, 'UTC', 'Asia/Karachi')) IN (${specificDates})`
+      sql = ` AND DATE(CONVERT_TZ(${column}, 'UTC', ?)) IN (?)`
+      whereParams.push(timeZone, specificDates)
+      console.log(sql)
       }
       break;
     case 'range':
-      sql = ` AND DATE(CONVERT_TZ(transactions.Date, 'UTC', 'Asia/Karachi')) BETWEEN '${range.from}' AND '${range.to}'`
+      if(range.from && range.to){
+        sql = ` AND DATE(CONVERT_TZ(${column}, 'UTC', ?)) BETWEEN ? AND ?`
+        whereParams.push(timeZone, range.from, range.to)
+      }
+
       break;
     default:
       break;
