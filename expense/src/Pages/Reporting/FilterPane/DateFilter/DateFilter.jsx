@@ -7,7 +7,7 @@ import {ViewExpensesContext} from '../../ViewExpenses'
 
 export default function DateFilter() {
 
-    const {dateFields, setDateFields, defaultDateFields, dateFilterFloats, setDateFilterFloats} = useContext(ViewExpensesContext)
+    const {dateFields, setDateFields, defaultDateFields, dateFilterFloats, setDateFilterFloats, getExpenses} = useContext(ViewExpensesContext)
     const additionalDateFields = {
         // 'Category': {value: '', placeholder: '', type: 'select', ref: {}, req: true,
         //  api: '/api/category', floats: filterFloats, setFloats: setFilterFloats, onClose: onRemoveCategory},

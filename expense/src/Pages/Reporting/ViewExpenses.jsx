@@ -78,7 +78,7 @@ export default function ViewExpenses() {
 
     useEffect(() => {
         getExpenses()
-    }, [dateFields['Time_Period'].value, filterFloats, subCatFilterFloats])
+    }, [dateFields['Time_Period'].value, filterFloats, subCatFilterFloats, dateFilterFloats, dateFields['From']?.value, dateFields['To']?.value])
 
     // useEffect(() => {
     //     // getExpenses()
@@ -97,7 +97,9 @@ export default function ViewExpenses() {
                 dateFilters: dateFilterFloats, 
                 subCatFilters: subCatFilterFloats,
                 timeZone: timeZone(),
-                timePeriod: dateFields['Time_Period'].value.ID
+                timePeriod: dateFields['Time_Period'].value.ID,
+                specificDates: dateFilterFloats,
+                range: {from: dateFields['From']?.value, to: dateFields['To']?.value}
             }})
        .then(res => {
            console.log(res.data)
@@ -133,7 +135,7 @@ export default function ViewExpenses() {
             categoryFields, setCategoryFields, filterFloats, 
             setFilterFloats, subCatFilterFloats, setSubCatFilterFloats,
             dateFields, setDateFields, defaultDateFields, dateFilterFloats, setDateFilterFloats, 
-            windowWidth
+            windowWidth, getExpenses
         }}
         >
          <div className='ve-main'>

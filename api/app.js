@@ -300,7 +300,9 @@ app.post('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
 
 app.get('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
   console.log('GET EXPENSES')
-  let {categoryFilters, dateFilters, subCatFilters, timeZone, timePeriod} = req.query
+  let {categoryFilters, dateFilters, subCatFilters, timeZone, timePeriod, specificDates, range} = req.query
+
+  console.log(specificDates)
 
   categoryFilters = categoryFilters ? categoryFilters : []
   dateFilters = dateFilters ? dateFilters : []
@@ -327,7 +329,7 @@ app.get('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
 
   // timePeriod = 'last_day'
   
-  let dateFilterClause = dateFilterSQL(timePeriod, dateFilters, 'transactions.Date', timeZone, whereParams)
+  let dateFilterClause = dateFilterSQL({filter: timePeriod, column: 'transactions.Date', timeZone, whereParams, specificDates: specificDates, range})
 
   let sql = `SELECT category.Name AS Category, sub_category.Name AS Sub_Category, expenses.Amount, transactions.Date, 
   expenses.Quantity, CONCAT(transactions.Note, ' ', expenses.Note) AS Description
@@ -363,7 +365,7 @@ app.get('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
 )
 
 
-function dateFilterSQL(filter, date, column, timeZone, allFilters = []){
+function dateFilterSQL({filter, date, column, timeZone, whereParams = [], specificDates = [], range}){
   let filterNames = [
     {ID: 'none', Name: ' '},
     {ID: 'curr_day', Name: 'Today'},
@@ -407,9 +409,21 @@ function dateFilterSQL(filter, date, column, timeZone, allFilters = []){
     case 'last_year':
       sql = ` AND YEAR(CONVERT_TZ(${column}, 'UTC', '${timeZone}')) = YEAR(CONVERT_TZ(NOW() - INTERVAL 1 YEAR, 'UTC', '${timeZone}'))`
       break;
+    case 'specific':
+      if(specificDates.length){
+      sql = ` AND DATE(CONVERT_TZ(transactions.Date, 'UTC', 'Asia/Karachi')) IN (${specificDates})`
+      }
+      break;
+    case 'range':
+      sql = ` AND DATE(CONVERT_TZ(transactions.Date, 'UTC', 'Asia/Karachi')) BETWEEN '${range.from}' AND '${range.to}'`
+      break;
     default:
       break;
   }
-
   return sql
+}
+
+function specificDatesSQL(specificDates){
+  let sql = ''
+  
 }
