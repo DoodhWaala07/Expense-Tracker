@@ -300,7 +300,7 @@ app.post('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
 
 app.get('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
   console.log('GET EXPENSES')
-  let {categoryFilters, dateFilters, subCatFilters} = req.query
+  let {categoryFilters, dateFilters, subCatFilters, timeZone, timePeriod} = req.query
 
   categoryFilters = categoryFilters ? categoryFilters : []
   dateFilters = dateFilters ? dateFilters : []
@@ -324,21 +324,31 @@ app.get('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
   })
   subCatFilterClause = subCatFilters.length ? ` AND expenses.Sub_Category IN (?)` : ''
   subCatFilters.length ? whereParams.push(subCatFilters) : null
+
+  // timePeriod = 'last_day'
   
+  let dateFilterClause = dateFilterSQL(timePeriod, dateFilters, 'transactions.Date', timeZone, whereParams)
 
   let sql = `SELECT category.Name AS Category, sub_category.Name AS Sub_Category, expenses.Amount, transactions.Date, 
   expenses.Quantity, CONCAT(transactions.Note, ' ', expenses.Note) AS Description
   FROM expenses INNER JOIN transactions ON expenses.Transaction = transactions.ID 
   INNER JOIN category ON expenses.Category = category.ID
   INNER JOIN sub_category ON expenses.Sub_Category = sub_category.ID
-  WHERE transactions.User = ?` + categoryFilterClause + subCatFilterClause
+  WHERE transactions.User = ?` + categoryFilterClause + subCatFilterClause + dateFilterClause
   let con
   try{
     con = await pool.getConnection()
 
+    // let test = await con.query(`SELECT category.Name AS Category, sub_category.Name AS Sub_Category, expenses.Amount, transactions.Date, 
+    //   expenses.Quantity, CONCAT(transactions.Note, ' ', expenses.Note) AS Description FROM expenses 
+    //   INNER JOIN transactions ON expenses.Transaction = transactions.ID INNER JOIN category ON expenses.Category = category.ID 
+    //   INNER JOIN sub_category ON expenses.Sub_Category = sub_category.ID WHERE transactions.User = 1 AND 
+    //   DATE(CONVERT_TZ(transactions.Date, 'UTC', 'Asia/Karachi')) = DATE(CONVERT_TZ('2024-09-18 22:00:00', 'UTC', 'Asia/Karachi'))`, whereParams)
+    // console.log(test[0])
+
     let result = await con.query(sql, whereParams)
 
-    console.log(result[0])
+    // console.log(result[0])
 
     res.send(result[0])
 
@@ -352,3 +362,54 @@ app.get('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
 }
 )
 
+
+function dateFilterSQL(filter, date, column, timeZone, allFilters = []){
+  let filterNames = [
+    {ID: 'none', Name: ' '},
+    {ID: 'curr_day', Name: 'Today'},
+    {ID: 'last_day', Name: 'Yesterday'},
+    {ID: 'curr_week', Name: 'This Week'},
+    {ID: 'last_week', Name: 'Last Week'},
+    {ID: 'curr_month', Name: 'This Month'},
+    {ID: 'last_month', Name: 'Last Month'},
+    {ID: 'curr_year', Name: 'This Year'},
+    {ID: 'last_year', Name: 'Last Year'},
+    {ID: 'specific', Name: 'Specific Dates'},
+    {ID: 'range', Name: 'Range'},
+  ]
+  let sql = ''
+  switch(filter) {
+    case 'curr_day':
+      sql = ` AND DATE(CONVERT_TZ(${column}, 'UTC', '${timeZone}')) = DATE(CONVERT_TZ(NOW(), 'UTC', '${timeZone}'))`
+      console.log(sql)
+      // sql = ` AND DATE(CONVERT_TZ(transactions.Date, 'UTC', 'Asia/Karachi')) = DATE(CONVERT_TZ('2024-09-18 22:00:00', 'UTC', 'Asia/Karachi'))`
+      // allFilters.push(date)
+      break;
+    case 'last_day':
+      sql = ` AND DATE(CONVERT_TZ(${column}, 'UTC', '${timeZone}')) = DATE(CONVERT_TZ(NOW() - INTERVAL 1 DAY, 'UTC', '${timeZone}'))`
+      // allFilters.push(date)
+      break;
+    case 'curr_week':
+      sql = ` AND YEARWEEK(CONVERT_TZ(${column}, 'UTC', '${timeZone}'), 1) = YEARWEEK(CONVERT_TZ(NOW(), 'UTC', '${timeZone}'), 1)`
+      break;
+    case 'last_week':
+      sql = ` AND YEARWEEK(CONVERT_TZ(${column}, 'UTC', '${timeZone}'), 1) = YEARWEEK(CONVERT_TZ(NOW() - INTERVAL 1 WEEK, 'UTC', '${timeZone}'), 1)`
+      break;
+    case 'curr_month':
+      sql = ` AND MONTH(CONVERT_TZ(${column}, 'UTC', '${timeZone}')) = MONTH(CONVERT_TZ(NOW(), 'UTC', '${timeZone}'))`
+      break;
+    case 'last_month':
+      sql = ` AND MONTH(CONVERT_TZ(${column}, 'UTC', '${timeZone}')) = MONTH(CONVERT_TZ(NOW() - INTERVAL 1 MONTH, 'UTC', '${timeZone}'))`
+      break;
+    case 'curr_year':
+      sql = ` AND YEAR(CONVERT_TZ(${column}, 'UTC', '${timeZone}')) = YEAR(CONVERT_TZ(NOW(), 'UTC', '${timeZone}'))`
+      break;
+    case 'last_year':
+      sql = ` AND YEAR(CONVERT_TZ(${column}, 'UTC', '${timeZone}')) = YEAR(CONVERT_TZ(NOW() - INTERVAL 1 YEAR, 'UTC', '${timeZone}'))`
+      break;
+    default:
+      break;
+  }
+
+  return sql
+}

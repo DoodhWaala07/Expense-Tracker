@@ -76,6 +76,14 @@ export default function ViewExpenses() {
         // }
     }, [filterFloats, subCatFilterFloats])
 
+    useEffect(() => {
+        getExpenses()
+    }, [dateFields['Time_Period'].value, filterFloats, subCatFilterFloats])
+
+    // useEffect(() => {
+    //     // getExpenses()
+    // }, dateFields['Time_Period'].value)
+
     //END SETUP FOR FILTER PANE
 
     //BEGIN FETCHING EXPENSES
