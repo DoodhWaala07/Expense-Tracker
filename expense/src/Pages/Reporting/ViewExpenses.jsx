@@ -117,9 +117,13 @@ export default function ViewExpenses() {
        })
     }
 
-    useEffect(() => {
-       
-    }, [])
+    function clearFilters() {
+        setFilterFloats([])
+        setSubCatFilterFloats([])
+        setDateFilterFloats([])
+        setDateFields(defaultDateFields)
+        setNoteFields(defaultNoteFields)
+    }
 
     useEffect(() => {
         window.addEventListener('resize', () => {
@@ -134,7 +138,6 @@ export default function ViewExpenses() {
         }
     }, [])
 
-    console.log()
     
     return(
         <>
@@ -155,7 +158,7 @@ export default function ViewExpenses() {
             })}
             <div>{timeZone()}</div>
         </div>
-        <FilterPane/>
+        <FilterPane clearFilters = {clearFilters}/>
         </ViewExpensesContext.Provider>
         </>
         

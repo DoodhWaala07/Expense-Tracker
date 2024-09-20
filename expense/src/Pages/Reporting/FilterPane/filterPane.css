@@ -162,3 +162,14 @@
     overflow-y: scroll;
 }
 
+.clearFilterIcon{
+  cursor: pointer;
+}
+
+.clearFilterIcon:hover{
+  color: rgba(45, 126, 255, 0.888);
+}
+
+.clearFilterIcon:active{
+  color: rgb(19, 102, 235);
+}

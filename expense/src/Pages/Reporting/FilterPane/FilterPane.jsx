@@ -13,7 +13,7 @@ import NoteFilter from './NoteFilter/NoteFilter';
 
 export const FilterPaneContext = createContext()
 
-export default function FilterPane() {
+export default function FilterPane({clearFilters}) {
 
     const [open, setOpen] = useState(false)
     const sidePaneRef = useRef()
@@ -42,6 +42,10 @@ export default function FilterPane() {
         }
     }, [open])
 
+    function clearFilterFunction(){
+        if(clearFilters) clearFilters()
+    }
+
     return (
         <FilterPaneContext.Provider value={{open: open, setOpen: setOpen}}>
         
@@ -54,7 +58,12 @@ export default function FilterPane() {
         <CSSTransition in={open} timeout={500} classNames="fp" unmountOnExit>
         <div className='filterPane' ref = {sidePaneRef} onBlur = {onBlur} tabIndex={0}>
 
-            <h1 style={{marginLeft: '15px'}}>Filters</h1>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px'}}>
+                <h1 style={{marginLeft: '15px'}}>Filters</h1>
+                <span class="material-symbols-outlined clearFilterIcon" onClick = {clearFilterFunction}>
+                    autorenew
+                </span>
+            </div>
 
             <CategoryFilter/>
             <DateFilter/>
