@@ -300,7 +300,7 @@ app.post('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
 
 app.get('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
   console.log('GET EXPENSES')
-  let {categoryFilters, dateFilters, subCatFilters, timeZone, timePeriod, specificDates, range} = req.query
+  let {categoryFilters, dateFilters, subCatFilters, timeZone, timePeriod, specificDates, range, note} = req.query
 
   console.log(specificDates)
 
@@ -326,6 +326,10 @@ app.get('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
   })
   subCatFilterClause = subCatFilters.length ? ` AND expenses.Sub_Category IN (?)` : ''
   subCatFilters.length ? whereParams.push(subCatFilters) : null
+  
+  let noteClause = ''
+  note ? noteClause = ` AND (transactions.Note LIKE ? OR expenses.Note LIKE ?)` : null
+  note ? whereParams.push(`%${note}%`, `%${note}%`) : null
 
   // timePeriod = 'last_day'
   
@@ -336,17 +340,10 @@ app.get('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
   FROM expenses INNER JOIN transactions ON expenses.Transaction = transactions.ID 
   INNER JOIN category ON expenses.Category = category.ID
   INNER JOIN sub_category ON expenses.Sub_Category = sub_category.ID
-  WHERE transactions.User = ?` + categoryFilterClause + subCatFilterClause + dateFilterClause
+  WHERE transactions.User = ?` + categoryFilterClause + subCatFilterClause + noteClause + dateFilterClause
   let con
   try{
     con = await pool.getConnection()
-
-    // let test = await con.query(`SELECT category.Name AS Category, sub_category.Name AS Sub_Category, expenses.Amount, transactions.Date, 
-    //   expenses.Quantity, CONCAT(transactions.Note, ' ', expenses.Note) AS Description FROM expenses 
-    //   INNER JOIN transactions ON expenses.Transaction = transactions.ID INNER JOIN category ON expenses.Category = category.ID 
-    //   INNER JOIN sub_category ON expenses.Sub_Category = sub_category.ID WHERE transactions.User = 1 AND 
-    //   DATE(CONVERT_TZ(transactions.Date, 'UTC', 'Asia/Karachi')) = DATE(CONVERT_TZ('2024-09-18 22:00:00', 'UTC', 'Asia/Karachi'))`, whereParams)
-    // console.log(test[0])
 
     let result = await con.query(sql, whereParams)
 

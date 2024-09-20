@@ -21,9 +21,9 @@ export default function ExpenseDisplayRow({expense, heading = false}){
     }, [windowWidth])
 
     return(
-        
-        <div className = 'edr-global-wrapper' onClick = {() => setOpen(prev => !prev)} style={{cursor: heading ? 'default' : 'pointer', fontWeight: heading ? 'bold' : 'normal', 
-        fontSize: heading ? 'normal' : 'small', marginBottom: heading ? '10px' : '0px', position: heading ? 'sticky' : 'static'}}>
+        <div className = {heading ? 'edr-global-wrapper edr-heading-wrapper' : 'edr-global-wrapper'} onClick = {() => setOpen(prev => !prev)} 
+        style={{cursor: heading ? 'default' : 'pointer', fontWeight: heading ? 'bold' : 'normal', 
+        fontSize: heading ? 'normal' : 'small', marginBottom: heading ? '10px' : '0px', position: heading ? 'sticky' : 'static', top: heading ? '0' : 'unset'}}>
             <div className = 'edr-wrapper'>
                 {Object.entries(expense).map(([key, value], i) => {
                     if(key === 'Date' && !heading){

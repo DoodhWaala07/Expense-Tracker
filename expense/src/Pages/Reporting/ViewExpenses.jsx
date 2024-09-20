@@ -57,8 +57,13 @@ export default function ViewExpenses() {
     //  'Specific_Date': {value: '', placeholder: 'Date', type: 'date', ref: {}, req: true, api: '/api/category', floats: dateFilterFloats, setFloats: setDateFilterFloats},
     }
 
+    const defaultNoteFields = {
+        'Note': {value: '', placeholder: 'Notes', type: 'text', ref: {}, req: false},
+    }
+
     const [categoryFields, setCategoryFields] = useState(defaultCategoryFields)
     const [dateFields, setDateFields] = useState(defaultDateFields)
+    const [noteFields, setNoteFields] = useState(defaultNoteFields)
 
     useEffect(() => {
         // if(filterFloats.length){
@@ -78,7 +83,8 @@ export default function ViewExpenses() {
 
     useEffect(() => {
         getExpenses()
-    }, [dateFields['Time_Period'].value, filterFloats, subCatFilterFloats, dateFilterFloats, dateFields['From']?.value, dateFields['To']?.value])
+    }, [dateFields['Time_Period'].value, filterFloats, subCatFilterFloats, 
+    dateFilterFloats, dateFields['From']?.value, dateFields['To']?.value, noteFields['Note']?.value])
 
     // useEffect(() => {
     //     // getExpenses()
@@ -99,7 +105,8 @@ export default function ViewExpenses() {
                 timeZone: timeZone(),
                 timePeriod: dateFields['Time_Period'].value.ID,
                 specificDates: dateFilterFloats,
-                range: {from: dateFields['From']?.value, to: dateFields['To']?.value}
+                range: {from: dateFields['From']?.value, to: dateFields['To']?.value},
+                note: noteFields['Note'].value,
             }})
        .then(res => {
            console.log(res.data)
@@ -135,7 +142,7 @@ export default function ViewExpenses() {
             categoryFields, setCategoryFields, filterFloats, 
             setFilterFloats, subCatFilterFloats, setSubCatFilterFloats,
             dateFields, setDateFields, defaultDateFields, dateFilterFloats, setDateFilterFloats, 
-            windowWidth, getExpenses
+            windowWidth, getExpenses, setWindowWidth, noteFields, setNoteFields,
         }}
         >
          <div className='ve-main'>

@@ -6,6 +6,13 @@
     cursor: pointer;
 }
 
+.edr-heading-wrapper{
+    cursor: default;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+}
+
 .edr-wrapper{
     display: grid;
     grid-template-columns: repeat(4, 25%);

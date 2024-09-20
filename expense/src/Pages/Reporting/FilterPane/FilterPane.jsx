@@ -9,6 +9,7 @@ import InputField from '../../../Global/InputField';
 import CategoryFilter from './CategoryFilter/CategoryFilter';
 import FilterFloats from './FilterFloats/FilterFloats';
 import DateFilter from './DateFilter/DateFilter';
+import NoteFilter from './NoteFilter/NoteFilter';
 
 export const FilterPaneContext = createContext()
 
@@ -57,6 +58,7 @@ export default function FilterPane() {
 
             <CategoryFilter/>
             <DateFilter/>
+            <NoteFilter/>
 
         </div>
         </CSSTransition>
