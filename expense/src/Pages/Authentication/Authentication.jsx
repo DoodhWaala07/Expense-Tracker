@@ -10,11 +10,13 @@ import formatData from '../../Global/Functions/formatData'
 import { DialogBoxContext } from '../../Global/DialogBox'
 import SignUp from './SignUp'
 import OTP from './OTP'
+import ForgotPassword from './ForgotPassword'
+import ResetPassword from './ResetPassword'
 
 export const AuthenticationContext = createContext()
 
-export default function Authentication() {
-    const [authType, setAuthType] = useState('signin')
+export default function Authentication({page = 'signin'}) {
+    const [authType, setAuthType] = useState(page)
 
     const [otpMetaData, setOtpMetaData] = useState({email: '', otp: '', api: ''})
 
@@ -28,6 +30,8 @@ export default function Authentication() {
             {authType === 'signin' && <SignIn/>}
             {authType === 'signup' && <SignUp/>}
             {authType === 'otp' && <OTP/>}
+            {authType === 'forgot' && <ForgotPassword/>}
+            {authType === 'reset' && <ResetPassword/>}
         </AuthenticationContext.Provider>
         </>
     )

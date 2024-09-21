@@ -233,6 +233,80 @@ rtr.post('/checkSignUpOTP', jsonParser, async (req, res) => {
     }
 });
 
+rtr.post('/forgotPassword', jsonParser, async (req, res) => {
+    let {Email} = req.body
+    let sql = 'SELECT * FROM users WHERE Email = ?'
+
+    let con
+
+    try {
+        con = await pool.getConnection()
+
+        await con.beginTransaction()
+        let [[user]] = await con.query(sql, [Email])
+        if(user){
+            let token = jwt.sign({id: user.ID, email: user.Email, username: user.Username}, process.env.JWT_SECRET, {expiresIn: '5m'})
+            let domain = process.env.NODE_ENV === 'production' ? 'managemyexpenses.netlify.app' : 'localhost:3000'
+            let mailOptions = {
+                from: 'managemyexpenses <nGq9A@example.com>',
+                to: user.Email,
+                subject: 'Password Reset Request',
+                html: `
+                <h1>Reset Password</h1>
+                <p>Click the link below to reset your password</p>
+                <a href="http://${domain}/resetPassword/${token}">Reset Password</a>`
+            }
+
+            await con.query('REPLACE INTO reset_password_requests (User) VALUES (?)', [user.ID])
+            const info = await transporter.sendMail(mailOptions);
+            await con.commit()
+            res.status(200).send('Password reset link sent to ' + user.Email)
+
+        } else {
+            if(con) con.rollback()
+            const error = new Error('User not found')
+            error.code = 'ER_NO_MATCH'
+            throw error
+        }
+    } catch (err) {
+        console.log(err)
+        if(err.code === 'ER_NO_MATCH') return res.status(404).send('User not found')
+        res.status(500).send('Server Error. Please try again later.')
+    } finally {
+        if(con) con.release()
+    }
+});
+
+rtr.post('/resetPassword', jsonParser, async (req, res) => {
+    let {token, Password} = req.body
+    let con = await pool.getConnection()
+    try{
+        let user = jwt.verify(token, process.env.JWT_SECRET)
+        let resetReq = await con.query('SELECT * FROM reset_password_requests WHERE User = ?', [user.id])
+
+        if(resetReq[0].length > 0){
+            const salt = bcrypt.genSaltSync(10)
+            const hash = bcrypt.hashSync(Password, salt)
+            await con.query('UPDATE users SET Password = ? WHERE ID = ?', [hash, user.id])
+            await con.query('DELETE FROM reset_password_requests WHERE User = ?', [user.id])
+        } else {
+            const error = new Error('Invalid token')
+            error.code = 'ER_NO_MATCH'
+            throw error
+        }
+
+        await con.commit()
+
+        res.status(200).send('Password reset successful')
+    } catch(err){
+        console.log(err)
+        if(err.code === 'ER_NO_MATCH' || err.name === 'TokenExpiredError' || err.name === 'JsonWebTokenError' || err.code === 'ERR_INVALID_SIGNATURE') return res.status(404).send('Invalid token')
+        res.status(500).send('Server Error. Please try again later.')
+    } finally {
+        if(con) con.release()
+    }
+})      
+
 rtr.get('/checkToken', authMiddleware, async (req, res) => {
     res.status(200).send('Authorized')
 })

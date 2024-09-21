@@ -10,6 +10,7 @@ import Test from './Pages/Test';
 import SidePane from './Global/SidePane/SidePane';
 import ViewExpenses from './Pages/Reporting/ViewExpenses';
 import FilterPane from './Pages/Reporting/FilterPane/FilterPane';
+import ResetPassword from './Pages/Authentication/ResetPassword';
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: '/viewExpenses',
         element: <ProtectedRoute><ViewExpenses/></ProtectedRoute>
+      },
+      {
+        path: '/resetPassword/:token',
+        element: <Authentication page={'reset'}/>,
       },
       // {
       //   path: '/viewExpenses',

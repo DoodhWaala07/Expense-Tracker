@@ -43,7 +43,7 @@ export default function ViewExpenses() {
         'Time_Period': {value: {ID: 'curr_month', Name: 'This Month'}, placeholder: 'Choose Time Period', type: 'select', ref: {}, req: true,
         // list: ['', 'curr_day', 'last_day', 'curr_week', 'last_week', 'curr_month', 'last_month', 'curr_year', 'last_year', 'custom'],
         list: [
-            {ID: 'none', Name: ' '},
+            // {ID: 'none', Name: ' '},
             {ID: 'curr_day', Name: 'Today'},
             {ID: 'last_day', Name: 'Yesterday'},
             {ID: 'curr_week', Name: 'This Week'},
