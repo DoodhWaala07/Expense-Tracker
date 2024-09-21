@@ -1,7 +1,5 @@
 export default function utcDate(date){
-    console.log(date)
     date = date.replace(' ', 'T') + 'Z'
-    console.log(new Date(date))
     return new Date(date)
 }
 

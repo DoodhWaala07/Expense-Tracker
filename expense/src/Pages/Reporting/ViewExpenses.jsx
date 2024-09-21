@@ -4,6 +4,7 @@ import './viewExpenses.css'
 import ExpenseDisplayRow from './ExpenseDisplayRow/ExpenseDisplayRow'
 import axios from 'axios'
 import { timeZone } from '../../Global/Functions/date'
+import PieChart from './PieChart/PieChart'
 
 export const ViewExpensesContext = createContext()
 
@@ -15,6 +16,7 @@ export default function ViewExpenses() {
     const [subCatFilterFloats, setSubCatFilterFloats] = useState([])
     const [dateFilterFloats, setDateFilterFloats] = useState([])
     const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+    const [sums, setSums] = useState([])
 
     function onRemoveCategory(category){
         console.log('ON REMOVE CATEGORY')
@@ -38,7 +40,7 @@ export default function ViewExpenses() {
     }
 
     const defaultDateFields = {
-        'Time_Period': {value: '', placeholder: 'Choose Time Period', type: 'select', ref: {}, req: true,
+        'Time_Period': {value: {ID: 'curr_month', Name: 'This Month'}, placeholder: 'Choose Time Period', type: 'select', ref: {}, req: true,
         // list: ['', 'curr_day', 'last_day', 'curr_week', 'last_week', 'curr_month', 'last_month', 'curr_year', 'last_year', 'custom'],
         list: [
             {ID: 'none', Name: ' '},
@@ -110,7 +112,8 @@ export default function ViewExpenses() {
             }})
        .then(res => {
            console.log(res.data)
-           setExpenses(res.data)
+           setExpenses(res.data.expenses)
+           setSums(res.data.sums)
        })
        .catch(err => {
            console.log(err)
@@ -150,6 +153,7 @@ export default function ViewExpenses() {
         >
          <div className='ve-main'>
             <h1>View Expenses</h1>
+            <PieChart data={sums} title = {dateFields['Time_Period'].value.Name}/>
             <ExpenseDisplayRow expense = {expenseHeadings} heading = {true}/>
             {expenses.map((expense, i) => {
                 return (

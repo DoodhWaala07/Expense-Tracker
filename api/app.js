@@ -340,16 +340,27 @@ app.get('/api/expenses', jsonParser, authMiddleware, async (req, res) => {
   FROM expenses INNER JOIN transactions ON expenses.Transaction = transactions.ID 
   INNER JOIN category ON expenses.Category = category.ID
   INNER JOIN sub_category ON expenses.Sub_Category = sub_category.ID
-  WHERE transactions.User = ?` + categoryFilterClause + subCatFilterClause + noteClause + dateFilterClause
+  WHERE transactions.User = ?` + categoryFilterClause + subCatFilterClause + noteClause + dateFilterClause + ' ORDER BY Date DESC'
+
+  let amtSql = `SELECT SUM(expenses.Amount) AS Total, category.Name FROM expenses
+  INNER JOIN category ON category.ID = expenses.Category
+  INNER JOIN transactions ON transactions.ID = expenses.Transaction
+  WHERE transactions.User = ?` + categoryFilterClause + subCatFilterClause + noteClause + dateFilterClause + ` GROUP BY expenses.Category`
+
   let con
   try{
     con = await pool.getConnection()
 
-    let result = await con.query(sql, whereParams)
+    let sums = await con.query(amtSql, whereParams)
+    let expenses = await con.query(sql, whereParams)
 
     // console.log(result[0])
 
-    res.send(result[0])
+    // res.send(result[0])
+
+    console.log(sums[0])
+
+    res.send({expenses: expenses[0], sums: sums[0]})
 
   } catch(err){
     console.log(err)
