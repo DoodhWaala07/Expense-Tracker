@@ -103,19 +103,19 @@ export default function ResetPassword() {
         .then(res => {
             console.log(res.data)
             setDialogBox(prev => {
-                return {...prev, show: true, msg: 'Password Reset Successful. Please Sign In.', confirm: () => {resetDialogBox(); navigate('/')}}
+                return {...prev, show: true, msg: 'Password Reset Successful. Please Sign In.', spinner: false, confirm: () => {resetDialogBox(); navigate('/')}}
             })
         })
         .catch(err => {
             console.log(err)
             if(err.status === 404){
                 setDialogBox(prev => {
-                    return {...prev, show: true, msg: 'This link is not valid or has expired. Please request a new one.', confirm: () => {resetDialogBox(); setAuthType('forgotPassword')}}
+                    return {...prev, show: true, msg: 'This link is not valid or has expired. Please request a new one.', spinner: false, confirm: () => {resetDialogBox(); setAuthType('forgotPassword')}}
                 })
             }
             if(err.status === 500){
                 setDialogBox(prev => {
-                    return {...prev, show: true, msg: 'Something went wrong. Please try again later', type: 'error', confirm: resetDialogBox}
+                    return {...prev, show: true, msg: 'Something went wrong. Please try again later', type: 'error', spinner: false, confirm: resetDialogBox}
                 })
             }
         })

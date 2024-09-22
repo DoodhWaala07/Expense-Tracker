@@ -1,7 +1,7 @@
 import MyForm from '../../Global/Form/MyForm'
 import InputField from '../../Global/InputField'
 import './expenseRow.css'
-import { useEffect, useState, useContext, forwardRef, useImperativeHandle } from 'react'
+import { useEffect, useState, useContext, forwardRef, useRef, useImperativeHandle } from 'react'
 import { RowsContext } from './AddExpenses'
 
 const ExpenseRow = forwardRef( ({index}, ref) => {
@@ -23,25 +23,10 @@ const ExpenseRow = forwardRef( ({index}, ref) => {
         }
     })
 
-    // const {setRows} = useContext(RowsContext)
-
-    // useEffect(() => {
-    //     setRows(prev => {
-    //         // prev[index] = Object.entries(expenseFields).reduce((acc, [key, field]) => {
-    //         //     console.log()
-    //         //     acc[key] = field.value
-    //         //     return acc
-    //         // })
-    //         let newObj = {}
-    //         Object.entries(expenseFields).forEach(([key, field]) => {
-    //             key = key === 'Sub-Category' ? 'Sub_Category' : key
-    //             newObj[key] = field.type === 'number' && field.value === '' ? 0 : (field.value.ID || field.value)
-    //         })
-    //         console.log(newObj)
-    //         prev[index] = newObj
-    //         return [...prev]
-    //     })
-    // }, [expenseFields])
+    const {setRows} = useContext(RowsContext)
+    const [contextMenu, setContextMenu] = useState(false)
+    const contextMenuRef = useRef()
+    const [position, setPosition] = useState({x: 0, y: 0})
 
     useEffect(() => {
         console.log('Changing Category')
@@ -63,13 +48,73 @@ const ExpenseRow = forwardRef( ({index}, ref) => {
         }
     }, [expenseFields['Category']])
 
+    function deleteRow() {
+        setRows(prev => {
+            return [...prev.filter(row => row !== index)]
+        })
+    }
+
+    const options = {
+        'Delete': {onClick: deleteRow}
+    }
+
+    function showContextMenu(e) {
+        e.preventDefault()
+        e.stopPropagation()
+        setPosition({x: e.pageX, y: e.pageY})
+        setContextMenu(true)
+    }
+
+    function hideContextMenu() {
+        setContextMenu(false)
+    }
+
+    useEffect(() => {
+        document.addEventListener('click', hideContextMenu)
+        return () => {
+            document.removeEventListener('click', hideContextMenu)
+        }
+    }, [])
+
     return(
-        <div className='expRowWrapper'>
+        <>
+        <div className='expRowWrapper' onContextMenu={showContextMenu}>
             <MyForm fields={expenseFields} setFields={setExpenseFields}>
                 {Object.entries(expenseFields).map(([key, field], i) => (
                     <InputField key = {i} id = {key} label = {field.label || key} placeholder = {field.label || field.placeholder || key} type = {field.type} ref = {field.ref} error={field.error} className={field.className}/>
                 ))}
             </MyForm>
+            {contextMenu && <ContextMenu options={options} setContextMenu={setContextMenu} ref={contextMenuRef} position={position}/>}
+        </div>
+        <p className='addExpenseRowBtn' style={{alignSelf:'flex-start', marginLeft: '15px'} } onClick={deleteRow}>Delete</p>
+        </>
+    )
+})
+
+const ContextMenu = forwardRef(({options, setContextMenu, position}, ref) => {
+
+    useEffect(() => {
+        let x = position.x
+        let y = position.y
+        ref.current.style.top = y + 'px'
+        ref.current.style.left = x + 'px'
+    }, [position])
+
+    function onClick(e, option){
+        // setContextMenu(false)
+        option.onClick()
+    }
+
+    return (
+        <div className='contextMenu' ref={ref}>
+            {Object.entries(options).map(([name, option], i) => {
+                return (
+                <>
+                    <div key={i} tabIndex={0} className='contextMenuOption' onClick={(e) => onClick(e, option)} onTouchStart={(e) => (e.target.focus())} >{name}</div>
+                </>
+                )
+            })
+            }
         </div>
     )
 })

@@ -55,3 +55,44 @@
     outline: none;
     border-bottom: 2px solid rgb(0, 123, 255);  
 }
+
+.contextMenu{
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    border: 1px solid black;
+    border-radius: 10px;
+    /* max-width: fit-content; */
+    width: 200px;
+    max-height: 200px;
+    /* padding: 20px; */
+    background-color: white;
+    user-select: none;
+    z-index: 6000;
+    max-height: 200px;
+    overflow-x: hidden;
+    /* overflow-y: scroll; */
+
+}
+
+.contextMenuOption{
+    padding: 10px;
+    padding-left: 30px;
+    cursor: pointer;
+    height: 20px;
+    font-size: larger;
+    color: black;
+    padding-bottom: 10px;
+    border-bottom: 1px solid;
+    width: 100%;
+  }
+
+  .contextMenuOption:hover{
+    background-color: rgb(89, 89, 89, 0.2);
+  }
+
+  .contextMenuOption:active{
+    background-color: rgb(89, 89, 89, 0.4);
+  }

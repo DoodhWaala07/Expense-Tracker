@@ -12,7 +12,8 @@ import { validateEmptyFields } from '../../Global/Functions/validation'
 export const RowsContext = createContext()
 
 export default function AddExpenses() {
-    const [rows, setRows] = useState(['row'])
+    const count = useRef(0)
+    const [rows, setRows] = useState([count.current])
     // const [errors, setErrors] = useState({})
     const {setDialogBox, resetDialogBox} = useContext(DialogBoxContext)
     const rowRefs = useRef([])
@@ -22,7 +23,8 @@ export default function AddExpenses() {
     })
 
     function addRow() {
-        setRows(prev => [...prev, 'row'])
+        count.current++
+        setRows(prev => [...prev, count.current])
     }
 
     function confirm(){
@@ -35,9 +37,12 @@ export default function AddExpenses() {
     }
 
     function addExpenses(){
-        let rows = rowRefs.current
+        if(rows.length === 0){
+            return null
+        }
+        let rowsRaw = rowRefs.current
         let errors = []
-        let rowsData = rows.map((row, index) => {
+        let rowsData = rowsRaw.map((row, index) => {
             let errorsObj = validateEmptyFields(row.expenseFields, row.setExpenseFields)
             if(Object.values(errorsObj).length > 0){
                 errors.push(errorsObj)
@@ -53,7 +58,8 @@ export default function AddExpenses() {
         axios.post('/api/expenses', {rows: rowsData, globalFields: formatData(globalFields)})
         .then(res => {
             let msg = 'Expenses added successfully.'
-            setRows([])
+            count.current = 0
+            setRows([count.current])
             setDialogBox(prev => ({msg, confirm: confirm, close: null, show: true}))
         })
         .catch(error => {
@@ -84,7 +90,7 @@ export default function AddExpenses() {
                 </MyForm>
             </div>
             <h2 style={{alignSelf: 'flex-start', marginLeft: '15px'}}>Expenses</h2>
-            {rows.map((row, index) => <ExpenseRow key={index} index={index} ref={(el) => rowRefs.current[index] = el}/>)}
+            {rows.map((row, index) => <ExpenseRow key={row} index={row} ref={(el) => rowRefs.current[index] = el}/>)}
             <p className='addExpenseRowBtn' onClick={addRow}>Add new</p>
             <p className='btn' style={{width: '50%'}} onClick={addExpenses}>Add Expenses</p>
         </div>
