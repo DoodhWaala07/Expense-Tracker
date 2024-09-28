@@ -135,11 +135,12 @@ app.get('/api/category', jsonParser, authMiddleware, async (req, res) => {
   let userId = req.user.id
   console.log('GET CATEGORY')
   let {input, type, page, limit} = req.query
+  
 
   let whereClause = 'WHERE User = ?'
   input ? whereClause += ' AND Name LIKE ?' : null
   limit = limit || 10
-  let offset = (parseInt(page) - 1) * 10
+  let offset = ((parseInt(page) || 1) - 1) * 10
 
   let sqlParams = [userId]
   input ? sqlParams.push(`%${input}%`) : null
@@ -150,12 +151,13 @@ app.get('/api/category', jsonParser, authMiddleware, async (req, res) => {
   // console.log(page)
   try{
     con = await pool.getConnection()
-    let sql = 'SELECT * FROM category ' + whereClause + ' LIMIT ? OFFSET ? '
+    let sql = page ? 'SELECT * FROM category ' + whereClause + ' LIMIT ? OFFSET ? ' : 'SELECT ID, Name AS Category FROM category ' + whereClause
+
     console.log(sql)
     // let sql = 'SELECT * FROM category ' + whereClause
 
     let result = await con.query(sql, sqlParams)
-    // console.log(result[0])
+    console.log(result[0])
     res.send(result[0])
   } catch(err){
     console.log(err)
@@ -176,18 +178,18 @@ app.get('/api/subcategory', jsonParser, authMiddleware, async (req, res) => {
   let whereClause = ' WHERE User = ? AND Category = ? '
   input ? whereClause += ' AND Name LIKE ?' : null
   limit = limit || 10
-  let offset = (parseInt(page) - 1) * 10
+  let offset = ((parseInt(page) || 1) - 1) * 10
   let sqlParams = [userId, catId]
 
   sqlParams = input ? [...sqlParams, `%${input}%`, limit, offset] : [...sqlParams, limit, offset]
 
-  let sql = 'SELECT * FROM sub_category' + whereClause + 'LIMIT ? OFFSET ?'
+  let sql = page ? 'SELECT * FROM sub_category' + whereClause + ' LIMIT ? OFFSET ? ' : 'SELECT ID, Name AS SubCategory FROM sub_category' + whereClause
 
   let con
   try{
     con = await pool.getConnection()
     let result = await con.query(sql, sqlParams)
-    // console.log(result[0])
+    console.log(result[0])
     res.send(result[0])
   } catch(err){
     console.log(err)

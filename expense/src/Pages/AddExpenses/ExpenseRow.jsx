@@ -23,7 +23,7 @@ const ExpenseRow = forwardRef( ({index}, ref) => {
         }
     })
 
-    const {setRows} = useContext(RowsContext)
+    const {setRows, rowRefs} = useContext(RowsContext)
     const [contextMenu, setContextMenu] = useState(false)
     const contextMenuRef = useRef()
     const [position, setPosition] = useState({x: 0, y: 0})
@@ -48,7 +48,16 @@ const ExpenseRow = forwardRef( ({index}, ref) => {
         }
     }, [expenseFields['Category']])
 
+    useEffect(() => {
+        console.log(expenseFields)
+    }, [expenseFields])
+
     function deleteRow() {
+        const filteredObject = Object.fromEntries(
+            Object.entries(rowRefs.current).filter(([key]) => key !== 'row'+index)
+        );
+        rowRefs.current = filteredObject
+        // console.log(rowRefs.current) 
         setRows(prev => {
             return [...prev.filter(row => row !== index)]
         })

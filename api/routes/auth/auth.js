@@ -305,10 +305,25 @@ rtr.post('/resetPassword', jsonParser, async (req, res) => {
     } finally {
         if(con) con.release()
     }
-})      
+})
+
+rtr.post('/checkResetToken', jsonParser,async (req, res) => {
+    let {token} = req.body
+
+    try{
+        let user = jwt.verify(token, process.env.JWT_SECRET)
+        res.status(200).send(user)
+    } catch(err){
+        console.log(err)
+        if(err.name === 'TokenExpiredError' || err.name === 'JsonWebTokenError' || err.code === 'ERR_INVALID_SIGNATURE') return res.status(404).send('Invalid token')
+        res.status(500).send('Server Error. Please try again later.')
+    }
+})
 
 rtr.get('/checkToken', authMiddleware, async (req, res) => {
     res.status(200).send('Authorized')
 })
+
+
 
 module.exports = rtr

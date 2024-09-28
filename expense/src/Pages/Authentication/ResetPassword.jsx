@@ -11,6 +11,7 @@ import { DialogBoxContext } from '../../Global/DialogBox'
 import { AuthenticationContext } from './Authentication'
 import { useParams } from 'react-router'
 import { useNavigate } from 'react-router'
+import Spinner from '../../Global/Spinner'
 
 
 export default function ResetPassword() {
@@ -24,6 +25,8 @@ export default function ResetPassword() {
     const {token} = useParams()
 
     const navigate = useNavigate()
+
+    const [loading, setLoading] = useState(true)
 
     function validatePassword(e){
         let password = e.target.value
@@ -124,14 +127,37 @@ export default function ResetPassword() {
         })
     }
 
+    useEffect(() => {
+        axios.post('/api/auth/checkResetToken', {token: token})
+        .then(res => {
+            console.log(res.data)
+        })
+        .catch(err => {
+            console.log(err)
+            if(err.status === 404){
+            setDialogBox(prev => {
+                return {...prev, show: true, msg: 'This link is no longer valid. Please request a new one.', spinner: false, confirm: () => {resetDialogBox(); navigate('/')}}
+            })
+            }
+            if(err.status === 500){
+                setDialogBox(prev => {
+                    return {...prev, show: true, msg: 'Something went wrong. Please try again later', type: 'error', spinner: false, confirm: () => {resetDialogBox(); navigate('/')}}
+                })
+            }
+        })
+    }, [])
+
     return (
         <div className="auth-main">
+            {loading && <Spinner/>}
+            {!loading && <>
             <h1>Reset Password</h1>
             <MyForm fields={signUpFields} setFields={setSignUpFields}>
                 {Object.entries(signUpFields).map(([key, field]) => <InputField label={field.label || key} placeholder={field.placeholder || field.label || key} id={key} type={field.type} error={field.error} />)}
             </MyForm>
             <p className='msg-p' onClick={() => setAuthType('signin')}>Already have an account? Sign In.</p>
             <button className='btn authBtn' onClick={resetPassword}>Change Password</button>
+            </>}
         </div>
     )
 }
