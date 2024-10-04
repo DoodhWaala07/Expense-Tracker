@@ -1,5 +1,5 @@
 
-import { createContext, useState } from 'react'
+import { Component, createContext, useState } from 'react'
 import './dialogBox.css'
 import Spinner from './Spinner'
 
@@ -22,11 +22,12 @@ export default function DialogBox({children, msg = '', confirm = null, close = n
 export const DialogBoxContext = createContext()
 
 export function GlobalDialogBox({children}){
-    const [dialogBox, setDialogBox] = useState({msg: '', confirm: null, close: null, show: false, spinner: false})
+    const [dialogBox, setDialogBox] = useState({msg: '', confirm: null, close: null, show: false, spinner: false, Component: null, componentProps: {}})
 
     function resetDialogBox(){
         setDialogBox(prev => ({msg: '', confirm: null, close: null, show: false}))
     }
+
     return(
         <DialogBoxContext.Provider value={{dialogBox: dialogBox, setDialogBox: setDialogBox, resetDialogBox: resetDialogBox}}>
         {dialogBox.show && (
@@ -34,6 +35,7 @@ export function GlobalDialogBox({children}){
         <div className='db-overlay'></div>
         <div className='db-main'>
             <div className='db-msg'>{dialogBox.msg}</div>
+            {dialogBox.Component && <dialogBox.Component {...dialogBox.componentProps}/>}
             {dialogBox.spinner && <Spinner/>}
             <div className='db-btns-main'>
                 {dialogBox.confirm && <button className='btn db-btn' onClick={dialogBox.confirm || null}>Confirm</button>}
